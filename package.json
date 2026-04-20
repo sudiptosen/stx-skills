@@ -1,0 +1,38 @@
+{
+  "name": "stx-skills",
+  "version": "1.1.0",
+  "description": "Organization-wide Claude Code skills collection",
+  "main": "dist/cli/install.js",
+  "bin": {
+    "stx-skills": "./dist/cli/install.js",
+    "git-checkin": "./dist/skills/git-checkin.js",
+    "image-resize": "./dist/skills/image-resize.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch",
+    "clean": "rm -rf dist",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "claude-code",
+    "skills",
+    "git",
+    "images",
+    "automation"
+  ],
+  "author": "STX",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "dist",
+    ".claude/skills"
+  ]
+}
