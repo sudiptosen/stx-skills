@@ -109,6 +109,27 @@ AI-context-safe image analysis. Reports unused and oversized images with target 
 
 See [.claude/skills/image-resize/SKILL.md](.claude/skills/image-resize/SKILL.md).
 
+### `/gen-worktree-report`
+
+Generates a polished single-file HTML report explaining the work done in a git worktree (or feature branch). Embedded template renders an executive summary, approach trade-off table, Mermaid architecture diagrams, file-by-file diffs, test results, and deferred caveats — same shape every time.
+
+```bash
+/gen-worktree-report                                # cwd, infer everything
+/gen-worktree-report --worktree ../feature-branch   # explicit path
+/gen-worktree-report --base develop                 # diff base (default: main)
+/gen-worktree-report --output docs/my-report.html   # explicit output file
+/gen-worktree-report --title "PNG → PDF migration"  # override title
+```
+
+The CLI helper also runs standalone — `gen-worktree-report --pretty` prints worktree context (branch, base, diff stat, recent commits) without writing HTML.
+
+- Output goes under `docs/` by default (`docs/<branch-name>-report.html`)
+- Mermaid loaded via CDN — single file, no build step
+- Diffs rendered with gutter + add/remove colours, not generic code fences
+- Never commits — leaves the file uncommitted for review
+
+See [.claude/skills/gen-worktree-report/SKILL.md](.claude/skills/gen-worktree-report/SKILL.md).
+
 ## Development
 
 ```bash
@@ -119,6 +140,7 @@ npm run watch       # recompile on change
 # Smoke test skills
 node dist/skills/git-checkin.js --dry-run
 node dist/skills/image-resize.js --help
+node dist/skills/gen-worktree-report.js --pretty
 node dist/cli/install.js --list
 ```
 
@@ -139,7 +161,7 @@ The installer auto-discovers every directory under `.claude/skills/` — no regi
 
 ```
 stx-skills/
-├── package.json                       # bin: stx-skills, git-checkin, git-pr-merge, image-resize
+├── package.json                       # bin: stx-skills, git-checkin, git-pr-merge, image-resize, gen-worktree-report
 ├── tsconfig.json
 ├── src/
 │   ├── cli/
@@ -147,7 +169,8 @@ stx-skills/
 │   └── skills/
 │       ├── git-checkin.ts
 │       ├── git-pr-merge.ts
-│       └── image-resize.ts
+│       ├── image-resize.ts
+│       └── gen-worktree-report.ts
 ├── dist/                              # compiled output (npm run build / prepare)
 ├── .claude/
 │   └── skills/
@@ -157,9 +180,13 @@ stx-skills/
 │       ├── git-pr-merge/
 │       │   ├── SKILL.md
 │       │   └── README.md
-│       └── image-resize/
+│       ├── image-resize/
+│       │   ├── SKILL.md
+│       │   └── README.md
+│       └── gen-worktree-report/
 │           ├── SKILL.md
-│           └── README.md
+│           ├── README.md
+│           └── template.html          # single-file HTML scaffold with Mermaid via CDN
 └── scripts/
     └── install.sh                     # fallback bash installer
 ```
