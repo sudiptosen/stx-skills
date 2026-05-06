@@ -2,10 +2,14 @@
 
 Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection. Install into any project without publishing to npm.
 
-## Install with `npx` (no registry)
+## Install (no registry needed)
 
 ```bash
-# From a sibling project
+# From the GitHub repo (recommended — no clone needed)
+cd ~/projects/my-app
+npx github:sudiptosen/stx-skills
+
+# From a local sibling clone
 cd ~/projects/my-app
 npx ../stx-skills
 
@@ -16,7 +20,11 @@ npx /Users/me/projects/stx-skills
 npx ../stx-skills ~/projects/my-app
 ```
 
-How this works without npm: `npx` accepts a local path, installs the package into a temporary cache, and runs the default bin (the one that matches the package name — `stx-skills`). Our `prepare` script builds the TypeScript to `dist/` during install, so the bin is always up to date.
+> ⚠️ **Syntax note.** The package path goes **right after `npx`**. Do not prefix it with `install` — `npx install ../stx-skills` fails with `could not determine executable to run` because npx treats `install` as the package name. (`npm install` is different; that's the `npm` CLI, not `npx`.) The word `install` is accepted only **after** the package spec: `npx ../stx-skills install` works as a no-op verb.
+
+How this works without a registry: `npx` accepts a local path or a `github:user/repo` spec, installs the package into a temporary cache, and runs the default bin (the one that matches the package name — `stx-skills`). The `prepare` script builds the TypeScript to `dist/` during install, so the bin is always up to date.
+
+Re-running the install **refreshes** — existing skill directories in the target are wiped and replaced with the latest, so it's the one command for both first-time install and updates.
 
 ### Options
 
@@ -58,6 +66,26 @@ Secure git workflow with pre-commit security scanning.
 - Adds `Co-Authored-By: Claude` line
 
 See [.claude/skills/git-checkin/SKILL.md](.claude/skills/git-checkin/SKILL.md).
+
+### `/git-pr-merge`
+
+End-to-end feature-branch shipping workflow with build-validation gates around the merge.
+
+```bash
+/git-pr-merge                                  # Run with chained approval
+/git-pr-merge --interactive                    # Prompt at each gate
+/git-pr-merge --dry-run                        # Print every command without executing
+/git-pr-merge --pr-title "fix: timer offset"   # Pre-supply the PR title
+/git-pr-merge --build-cmd "pnpm build"         # Override build command
+```
+
+- Chain: pre-flight → commit → push & PR → build #1 → squash-merge → refresh main → build #2 → worktree cleanup → branch delete
+- Two build-validation gates (pre-merge in feature worktree, post-merge in main worktree)
+- Halts on any failure — never silently retries or skips
+- Falls back to `gh api -X DELETE …git/refs/heads/<branch>` when local-checkout blocks branch deletion
+- Designed to honour the user's "Multi-Step Workflow Approvals" governance rule
+
+See [.claude/skills/git-pr-merge/SKILL.md](.claude/skills/git-pr-merge/SKILL.md).
 
 ### `/image-resize`
 
@@ -111,18 +139,22 @@ The installer auto-discovers every directory under `.claude/skills/` — no regi
 
 ```
 stx-skills/
-├── package.json                       # bin: stx-skills, git-checkin, image-resize
+├── package.json                       # bin: stx-skills, git-checkin, git-pr-merge, image-resize
 ├── tsconfig.json
 ├── src/
 │   ├── cli/
 │   │   └── install.ts                 # `npx ../stx-skills` entry point
 │   └── skills/
 │       ├── git-checkin.ts
+│       ├── git-pr-merge.ts
 │       └── image-resize.ts
 ├── dist/                              # compiled output (npm run build / prepare)
 ├── .claude/
 │   └── skills/
 │       ├── git-checkin/
+│       │   ├── SKILL.md
+│       │   └── README.md
+│       ├── git-pr-merge/
 │       │   ├── SKILL.md
 │       │   └── README.md
 │       └── image-resize/
