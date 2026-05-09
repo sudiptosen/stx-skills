@@ -130,6 +130,24 @@ The CLI helper also runs standalone — `gen-worktree-report --pretty` prints wo
 
 See [.claude/skills/gen-worktree-report/SKILL.md](.claude/skills/gen-worktree-report/SKILL.md).
 
+### `/fix-issue`
+
+Drives a two-agent QA → Coder loop against a known bug (or small cluster of related bugs). The skill interviews the user to fill the prompt template, confirms the worktree state, presents the rendered prompt for explicit acceptance, then kicks off the loop.
+
+```
+/fix-issue                         # Interactive — interviews the user
+/fix-issue "Fix Pro Monthly card"  # Pre-supply the title; the rest is interactive
+```
+
+- Worktree-first: confirms a non-main worktree exists (or proposes one) before any test or code edit
+- Failing-test-first: QA writes the test and confirms it fails for the right reason before the Coder starts
+- Hard separation: Coder cannot touch test files (halt-the-loop offense)
+- Iteration caps: 3 cycles on the same surface symptom, 5 total cycles (configurable)
+- Acceptance gate: rendered prompt is shown to the user for review before any agent runs
+- Conversational only — no CLI binary; the skill's logic lives entirely in `SKILL.md`
+
+See [.claude/skills/fix-issue/SKILL.md](.claude/skills/fix-issue/SKILL.md).
+
 ## Development
 
 ```bash
