@@ -1,0 +1,91 @@
+<!doctype html>
+<!--
+================================================================================
+  qa-verse.html — QA Agent (Agent 3) output template.
+
+  Rendered after Gate 3 from wave-state.json. Lists every failing test
+  written for the wave, mapped to the Task it covers. Includes paste of
+  the failure output as evidence the tests fail for the right reason.
+
+  PLACEHOLDERS:
+    {{WAVE_ID}}
+    {{WAVE_SLUG}}
+    {{GENERATED_AT}}
+    {{VITEST_INSTALLED}}         "yes" | "no" | "not needed"
+    {{#each test_entries}}
+      {{task_id}}                F1-T1
+      {{feature_id}}             F1
+      {{test_kind}}              playwright | e2e | vitest-unit
+      {{test_path}}              relative path
+      {{coverage_summary}}       one sentence: what does this test assert?
+      {{failure_output}}         pasted output from initial failing run
+    {{/each}}
+    {{#each unwritable}}         tasks QA could NOT write a test for
+      {{task_id}}
+      {{reason}}
+      {{manual_protocol}}        proposed manual verification steps
+    {{/each}}
+================================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QA Verse — {{WAVE_ID}}</title>
+{{INLINE_STYLES}}
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Wave artifact · written by Agent 3 (QA)</div>
+    <h1>QA Verse</h1>
+    <div class="meta">
+      <code>{{WAVE_ID}}</code> · slug <code>{{WAVE_SLUG}}</code> · generated <code>{{GENERATED_AT}}</code> · vitest <code>{{VITEST_INSTALLED}}</code>
+    </div>
+  </header>
+
+  <h2><span class="num">§1</span> Failing tests</h2>
+  <p>One test per Task. Each test fails right now (the feature isn't built yet) and asserts the Task's acceptance hint. The QA agent will rerun these independently after each Dev cycle — Dev agents are not allowed to edit these files.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th style="width:80px">Task</th>
+        <th style="width:110px">Kind</th>
+        <th>Test path & what it asserts</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each test_entries}}
+      <tr>
+        <td><code>{{task_id}}</code></td>
+        <td><span class="tier tier-{{test_kind}}">{{test_kind}}</span></td>
+        <td>
+          <code>{{test_path}}</code>
+          <p style="margin-top:8px">{{coverage_summary}}</p>
+          <details>
+            <summary style="cursor:pointer;color:var(--muted);font-size:13px">failing-run output</summary>
+            <pre>{{failure_output}}</pre>
+          </details>
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <h2><span class="num">§2</span> Tasks without a test (require manual verification)</h2>
+  {{#each unwritable}}
+  <div class="danger">
+    <strong>Task <code>{{task_id}}</code></strong> could not be automated. Reason: {{reason}}
+    <p style="margin-top:8px"><strong>Manual verification protocol:</strong></p>
+    <p>{{manual_protocol}}</p>
+  </div>
+  {{/each}}
+
+  <h2><span class="num">§3</span> Gate 3 — Dry-run boundary</h2>
+  <div class="note">
+    By default the wave halts here. The user reviews the failing tests above and explicitly approves Dev execution. Approving past Gate 3 unleashes the Dev wave (tier-specialized agents working against the failing tests under QA's supervision).
+  </div>
+</div>
+</body>
+</html>
