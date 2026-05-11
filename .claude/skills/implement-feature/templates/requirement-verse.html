@@ -1,0 +1,87 @@
+<!doctype html>
+<!--
+================================================================================
+  requirement-verse.html — Analyst (Agent 1) output template.
+
+  Rendered after Gate 1 from wave-state.json. Each Feature is one kanban card
+  with acceptance criteria, actor, existing-system impact, and out-of-scope.
+
+  PLACEHOLDERS:
+    {{WAVE_ID}}                  e.g. wave-admin-multi-delete-7f3a
+    {{WAVE_SLUG}}                e.g. admin-multi-delete
+    {{GENERATED_AT}}             ISO timestamp
+    {{INITIAL_REQUEST}}          original user description (multiline)
+    {{OUT_OF_SCOPE_SEED}}        rendered as a bullet list
+    {{#each features}}           iterate wave-state.json.features
+      {{id}}                     e.g. F1
+      {{title}}
+      {{actor}}
+      {{acceptance_criteria}}    rendered as a numbered list (HTML <ol>)
+      {{existing_system_impact}} multi-paragraph HTML
+      {{out_of_scope}}           rendered as a bullet list
+    {{/each}}
+================================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Requirement Verse — {{WAVE_ID}}</title>
+{{INLINE_STYLES}}
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Wave artifact · written by Agent 1 (Analyst)</div>
+    <h1>Requirement Verse</h1>
+    <div class="meta">
+      <code>{{WAVE_ID}}</code> · slug <code>{{WAVE_SLUG}}</code> · generated <code>{{GENERATED_AT}}</code>
+    </div>
+  </header>
+
+  <h2><span class="num">§1</span> Initial request</h2>
+  <div class="card">
+    <p>{{INITIAL_REQUEST}}</p>
+  </div>
+
+  <h2><span class="num">§2</span> Out of scope (seed)</h2>
+  <div class="note">
+    These were declared off-limits at wave start. The Architect may add more at Gate 2; after Gate 2 closes the list is frozen for the wave.
+  </div>
+  <ul>{{OUT_OF_SCOPE_SEED}}</ul>
+
+  <h2><span class="num">§3</span> Features</h2>
+  <p>Each card below is one Feature. Acceptance criteria are numbered so QA can map a failing test to each numbered item.</p>
+
+  {{#each features}}
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <span class="card-id">{{id}}</span>
+        <h3 class="card-title" style="margin-top:4px">{{title}}</h3>
+      </div>
+      <span class="status status-todo">{{status}}</span>
+    </div>
+
+    <div class="meta-row">
+      <span><strong>Actor:</strong> {{actor}}</span>
+    </div>
+
+    <h3>Acceptance criteria</h3>
+    <ol>{{acceptance_criteria}}</ol>
+
+    <h3>Existing system impact</h3>
+    {{existing_system_impact}}
+
+    <h3>Out of scope (specific to this Feature)</h3>
+    <ul>{{out_of_scope}}</ul>
+  </div>
+  {{/each}}
+
+  <h2><span class="num">§4</span> Gate 1</h2>
+  <div class="note">
+    The orchestrator pauses here. The user must approve this document before the Architect (Agent 2) begins decomposing Features into Tasks.
+  </div>
+</div>
+</body>
+</html>
