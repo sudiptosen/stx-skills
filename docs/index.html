@@ -1,0 +1,2000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>STX Skills — Walkthrough & Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d1421;
+    --ink-soft: #2a3447;
+    --paper: #f7f4ed;
+    --paper-2: #efe9dc;
+    --rule: #d3c9b6;
+    --accent: #1f4e79;
+    --teal: #1d6b76;
+    --gold: #b8893a;
+    --red: #b13d2c;
+    --green: #2f6a45;
+    --gray: #6f7686;
+    --shadow: 0 1px 0 rgba(13,20,33,0.05), 0 12px 32px -12px rgba(13,20,33,0.18);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  /* Anchor-jump compensation for the sticky masthead — keep ~64px clear so
+     section headings don't hide under the bar. Also smooth the jump. */
+  html { scroll-padding-top: 64px; scroll-behavior: smooth; }
+  body {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+    font-size: 15.5px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .mono { font-family: "JetBrains Mono", ui-monospace, monospace; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 36px; }
+
+  /* ───────────────────── Cover ───────────────────── */
+  .cover {
+    background: linear-gradient(135deg, #0c1e2a 0%, #1a3b4d 60%, #1f4e79 100%);
+    color: #f4f1ea;
+    padding: 58px 0 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::after {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.06) 1px, transparent 0);
+    background-size: 28px 28px; opacity: 0.6; pointer-events: none;
+  }
+  .cover > .wrap { position: relative; z-index: 1; }
+  .masthead {
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid rgba(255,255,255,0.18);
+    padding-bottom: 14px; margin-bottom: 32px;
+    font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.78);
+  }
+  .masthead .logo {
+    font-family: "Fraunces", serif; font-weight: 700; font-size: 20px;
+    letter-spacing: 0; text-transform: none; color: #fff;
+  }
+  .masthead .logo span { color: var(--gold); }
+  .cover-eyebrow {
+    font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--gold); font-weight: 700; margin-bottom: 16px;
+  }
+  .cover h1 {
+    font-family: "Fraunces", serif; font-weight: 400;
+    font-size: clamp(26px, 3.6vw, 44px);
+    line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.015em;
+    white-space: nowrap;
+  }
+  /* Allow wrap on truly narrow screens so it doesn't overflow */
+  @media (max-width: 600px) {
+    .cover h1 { white-space: normal; font-size: 26px; }
+  }
+  .cover h1 em { font-style: italic; color: var(--gold); }
+  .cover .dek {
+    font-family: "Fraunces", serif; font-size: clamp(16px, 1.7vw, 19px);
+    line-height: 1.45; color: rgba(244,241,234,0.85);
+    max-width: 720px; margin-bottom: 28px;
+  }
+
+  .dash {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px; padding: 18px;
+  }
+  /* Always single row — scale down on narrow screens instead of wrapping */
+  @media (max-width: 760px) {
+    .dash { padding: 12px; gap: 4px; }
+    .dash .stat { padding: 4px 6px; }
+    .dash .stat .n { font-size: 22px; }
+    .dash .stat .l { font-size: 9px; letter-spacing: 0.12em; }
+  }
+  .dash .stat { padding: 4px 12px; border-right: 1px solid rgba(255,255,255,0.12); }
+  .dash .stat:last-child { border-right: none; }
+  .dash .stat .n {
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 28px;
+    line-height: 1; color: #fff; display: block; margin-bottom: 4px;
+  }
+  .dash .stat .l {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: rgba(255,255,255,0.65); font-weight: 600;
+  }
+  .dash .n.gold  { color: var(--gold); }
+  .dash .n.teal  { color: #7fb8c2; }
+  .dash .n.green { color: #5db077; }
+
+  /* ───────────────────── Article ───────────────────── */
+  article { padding: 48px 0 32px; }
+  section { margin-bottom: 60px; }
+
+  /* PROMINENT SECTION HEADERS (per update #5) */
+  .sect-head {
+    display: flex; align-items: baseline; gap: 18px;
+    padding: 18px 0 6px;
+    border-bottom: 2px solid var(--ink);
+    margin-bottom: 24px;
+  }
+  .sect-head .sect-n {
+    font-family: "Fraunces", serif; font-weight: 700;
+    font-size: clamp(38px, 4.4vw, 52px);
+    line-height: 1; color: var(--gold);
+    letter-spacing: -0.02em;
+  }
+  .sect-head .sect-name {
+    font-family: "Inter", sans-serif; font-weight: 800;
+    font-size: clamp(18px, 2vw, 22px);
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: var(--ink); line-height: 1.1;
+  }
+  .sect-tag {
+    font-family: "Inter", sans-serif; font-weight: 500;
+    font-size: 13px; color: var(--gray);
+    margin-bottom: 22px;
+  }
+
+  h3 {
+    font-family: "Fraunces", serif; font-weight: 600;
+    font-size: 19px; line-height: 1.25;
+    margin: 28px 0 10px;
+  }
+  h4 {
+    font-family: "Inter", sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 0.20em; text-transform: uppercase;
+    color: var(--teal); margin: 18px 0 8px;
+  }
+  p { margin: 0 0 12px; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(31,78,121,0.3); }
+  a:hover { border-bottom-color: var(--accent); }
+  strong { font-weight: 600; }
+  code, kbd {
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-size: 13px;
+  }
+  p code, li code, td code {
+    background: var(--paper-2); padding: 1px 6px; border-radius: 3px;
+    border: 1px solid var(--rule); font-size: 12.5px;
+  }
+  pre {
+    background: #1a2230; color: #e8e3d5; padding: 14px 16px;
+    border-radius: 6px; overflow-x: auto;
+    font-family: "JetBrains Mono", monospace; font-size: 12.5px;
+    line-height: 1.55; border: 1px solid #2a3447;
+    margin: 12px 0;
+  }
+  pre .c { color: #8aa39b; }
+  pre .k { color: #ddb87b; }
+  pre .s { color: #a3c7a8; }
+  pre .o { color: #d49b7a; }
+
+  .callout {
+    background: var(--paper-2); border: 1px solid var(--rule);
+    border-radius: 4px; padding: 18px 22px;
+    margin: 18px 0; font-size: 14px;
+  }
+  .callout-teal { background: #e6efef; border-color: #b4cccf; }
+  .callout-teal strong { color: var(--teal); }
+  .callout-gold { background: #fcf2dc; border-color: #e8d3a0; }
+  .callout-gold strong { color: var(--gold); }
+
+  .type {
+    display: inline-block;
+    font-family: "Inter", sans-serif;
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    font-weight: 700; padding: 4px 9px; border-radius: 3px;
+    vertical-align: middle;
+  }
+  .type-main    { background: #e2eaf3; color: var(--accent); }
+  .type-wt      { background: #e6efef; color: var(--teal); }
+  .type-any     { background: #fcf2dc; color: var(--gold); }
+  .type-planned { background: var(--paper-2); color: var(--gray); }
+
+  /* LEGEND */
+  .legend {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    margin: 18px 0 26px; padding: 0;
+    box-shadow: var(--shadow); overflow: hidden;
+  }
+  .legend .row {
+    display: grid; grid-template-columns: 150px 1fr; gap: 18px;
+    padding: 14px 22px; align-items: center;
+    border-top: 1px solid var(--rule);
+  }
+  .legend .row:first-child { border-top: none; }
+  .legend .row .badge { justify-self: start; }
+  .legend .row .txt { font-size: 14px; color: var(--ink-soft); }
+  .legend .row .txt strong { color: var(--ink); }
+
+  .toc {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    padding: 16px 22px; margin: 0 0 28px;
+    box-shadow: var(--shadow);
+  }
+  .toc h4 { margin: 0 0 10px; color: var(--teal); }
+  .toc ol {
+    margin: 0; padding-left: 24px;
+    columns: 2; column-gap: 24px; font-size: 14.5px;
+  }
+  @media (max-width: 760px) { .toc ol { columns: 1; } }
+  .toc ol li { margin-bottom: 5px; break-inside: avoid; }
+  .toc a { border-bottom: none; }
+  .toc a:hover { border-bottom: 1px solid var(--accent); }
+
+  .steps {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;
+    margin: 14px 0 22px;
+  }
+  @media (max-width: 1000px) { .steps { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 600px)  { .steps { grid-template-columns: 1fr 1fr; } }
+  .step {
+    background: #fff; border: 1px solid var(--rule); border-radius: 6px;
+    padding: 12px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 5px;
+  }
+  .step .n {
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 20px;
+    color: var(--gold); line-height: 1;
+  }
+  .step .t {
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 13.5px;
+    color: var(--ink); line-height: 1.2;
+  }
+  .step .c {
+    font-family: "JetBrains Mono", monospace; font-size: 10.5px;
+    color: var(--accent); margin-top: 2px;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+
+  .types3 {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    margin: 22px 0;
+  }
+  @media (max-width: 760px) { .types3 { grid-template-columns: 1fr; } }
+  .tb {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    padding: 18px 20px; box-shadow: var(--shadow);
+    border-top: 4px solid var(--accent);
+  }
+  .tb.wt  { border-top-color: var(--teal); }
+  .tb.any { border-top-color: var(--gold); }
+  .tb .head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .tb .head .label {
+    font-family: "Inter", sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--accent);
+  }
+  .tb.wt  .head .label { color: var(--teal); }
+  .tb.any .head .label { color: var(--gold); }
+  .tb ul { margin: 0; padding: 0; list-style: none; }
+  .tb ul li {
+    font-family: "JetBrains Mono", monospace; font-size: 12.5px;
+    color: var(--accent); padding: 5px 0;
+    border-top: 1px dashed var(--rule);
+  }
+  .tb.wt  ul li { color: var(--teal); }
+  .tb.any ul li { color: var(--gold); }
+  .tb ul li:first-child { border-top: none; }
+  .tb ul li .when {
+    color: var(--gray); font-family: "Inter", sans-serif; font-size: 11px;
+    display: block; margin-top: 2px;
+  }
+
+  details.skill {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    margin-bottom: 10px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  details.skill summary {
+    list-style: none; cursor: pointer; user-select: none;
+    padding: 16px 22px;
+    display: grid;
+    grid-template-columns: 36px 1fr 110px 70px 28px;
+    gap: 14px; align-items: center;
+    background: #fff; transition: background 0.15s;
+  }
+  details.skill summary::-webkit-details-marker { display: none; }
+  details.skill summary:hover { background: #fbf8f1; }
+  details.skill[open] summary { border-bottom: 1px solid var(--rule); background: #fbf8f1; }
+  details.skill summary .ico {
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 16px;
+    color: var(--gold); text-align: center;
+    background: #faf6ec; border: 1px solid var(--rule); border-radius: 3px;
+    padding: 4px 0; line-height: 1;
+  }
+  details.skill summary .nm {
+    font-family: "JetBrains Mono", monospace; font-size: 14px;
+    color: var(--ink); font-weight: 600;
+  }
+  details.skill summary .nm .one {
+    display: block; font-family: "Inter", sans-serif; font-size: 12.5px;
+    color: var(--ink-soft); font-weight: 400; margin-top: 3px;
+    white-space: normal;
+  }
+  details.skill summary .caret {
+    width: 20px; height: 20px; color: var(--gray); justify-self: end;
+    transition: transform 0.2s;
+  }
+  details.skill[open] summary .caret { transform: rotate(180deg); color: var(--teal); }
+  details.skill summary .ver {
+    font-family: "JetBrains Mono", monospace; font-size: 11px;
+    color: var(--gray); text-align: right;
+  }
+  @media (max-width: 760px) {
+    details.skill summary { grid-template-columns: 36px 1fr 26px; gap: 10px; }
+    details.skill summary .type, details.skill summary .ver { display: none; }
+  }
+
+  details.skill .body {
+    padding: 18px 24px 22px;
+    background: linear-gradient(180deg, #fcfaf4 0%, #fff 100%);
+  }
+  details.skill .body > p:first-child {
+    font-family: "Fraunces", serif; font-size: 15.5px; line-height: 1.45;
+    color: var(--ink); max-width: 760px;
+  }
+  details.skill .body .blocks {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin: 14px 0;
+  }
+  @media (max-width: 760px) { details.skill .body .blocks { grid-template-columns: 1fr; } }
+  .block {
+    background: #fff; border: 1px solid var(--rule); border-radius: 4px;
+    padding: 12px 14px;
+  }
+  .block.use      { border-left: 3px solid var(--green); }
+  .block.dontuse  { border-left: 3px solid var(--red); }
+  .block .lbl {
+    font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--green); font-weight: 700; margin-bottom: 5px;
+  }
+  .block.dontuse .lbl { color: var(--red); }
+  .block ul {
+    margin: 0; padding-left: 16px;
+    font-size: 13px; color: var(--ink-soft);
+  }
+  .block ul li { margin-bottom: 3px; }
+
+  .deftbl {
+    width: 100%; border-collapse: collapse;
+    margin: 10px 0 16px; font-size: 13px;
+  }
+  .deftbl th, .deftbl td {
+    text-align: left; padding: 8px 11px;
+    border-bottom: 1px solid var(--rule); vertical-align: top;
+  }
+  .deftbl th {
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--gray); font-weight: 700; background: var(--paper-2);
+  }
+  .deftbl tr:last-child td { border-bottom: none; }
+  .deftbl td.k {
+    font-family: "JetBrains Mono", monospace; font-size: 12px;
+    color: var(--accent); white-space: nowrap;
+  }
+  .deftbl td.t {
+    font-family: "JetBrains Mono", monospace; font-size: 11.5px;
+    color: var(--gold); white-space: nowrap;
+  }
+
+  .diagram {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    padding: 18px; margin: 18px 0;
+    box-shadow: var(--shadow); overflow-x: auto;
+  }
+  .diagram svg { display: block; margin: 0 auto; max-width: 100%; height: auto; }
+  .diagram .caption {
+    font-size: 12px; color: var(--gray); text-align: center;
+    margin-top: 10px; font-style: italic;
+  }
+
+  .pending {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    margin: 10px 0; padding: 0; box-shadow: var(--shadow); overflow: hidden;
+  }
+  .pending .row {
+    display: grid; grid-template-columns: 48px 1fr 110px;
+    gap: 16px; padding: 14px 22px;
+    border-top: 1px solid var(--rule); align-items: start;
+  }
+  .pending .row:first-child { border-top: none; }
+  .pending .row .num {
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 20px;
+    color: var(--gold); line-height: 1;
+  }
+  .pending .row .body h4 {
+    font-family: "Fraunces", serif; font-weight: 600;
+    font-size: 16px; color: var(--ink); margin: 0 0 4px;
+    text-transform: none; letter-spacing: 0;
+  }
+  .pending .row .body p { font-size: 13px; color: var(--ink-soft); margin: 0; }
+  .pending .row .pill {
+    display: inline-block;
+    font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+    font-weight: 700; padding: 4px 9px; border-radius: 3px;
+    background: var(--paper-2); color: var(--gray);
+    text-align: center;
+  }
+  .pending .row .pill.planned  { background: #e2eaf3; color: var(--accent); }
+  .pending .row .pill.research { background: #fcf2dc; color: var(--gold); }
+
+  footer.colophon {
+    border-top: 1px solid var(--rule);
+    padding: 24px 0 56px;
+    font-size: 12px; color: var(--gray);
+    text-align: center;
+  }
+  footer.colophon strong { color: var(--ink-soft); }
+
+  /* Clickable SVG diagram boxes */
+  .diagram svg a { cursor: pointer; }
+  .diagram svg a:hover { filter: brightness(0.96); }
+  .diagram svg a:hover rect { stroke-width: 2; }
+
+  /* Mental model — principle cards */
+  .principles {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin: 18px 0 28px;
+  }
+  @media (max-width: 760px) { .principles { grid-template-columns: 1fr; } }
+  .principle {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    padding: 20px 22px; box-shadow: var(--shadow);
+    border-left: 4px solid var(--accent);
+  }
+  .principle .num {
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 28px;
+    color: var(--gold); line-height: 1; margin-bottom: 6px;
+  }
+  .principle h4 {
+    font-family: "Fraunces", serif; font-weight: 600; font-size: 17px;
+    color: var(--ink); margin: 0 0 8px;
+    text-transform: none; letter-spacing: 0;
+  }
+  .principle p {
+    margin: 0; font-size: 13.5px; color: var(--ink-soft); line-height: 1.5;
+  }
+
+  .followon {
+    background: var(--paper-2); border: 1px solid var(--rule);
+    border-radius: 6px; padding: 14px 20px;
+    font-size: 13.5px; color: var(--ink-soft);
+    margin: 0 0 28px;
+  }
+  .followon strong { color: var(--ink); }
+  .followon ul { margin: 8px 0 0; padding-left: 22px; }
+  .followon li { margin-bottom: 3px; }
+
+  /* Scenario — day-by-day cards */
+  .days {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px;
+    margin: 18px 0 4px;
+  }
+  @media (max-width: 900px) { .days { grid-template-columns: 1fr; } }
+  .day {
+    background: #fff; border: 1px solid var(--rule); border-radius: 8px;
+    box-shadow: var(--shadow); overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .day .d-label {
+    background: var(--accent); color: #fff;
+    padding: 10px 16px;
+    font-family: "Inter", sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+  }
+  .day .d-where {
+    background: var(--paper-2); color: var(--ink-soft);
+    padding: 6px 16px;
+    font-family: "JetBrains Mono", monospace; font-size: 11px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .day pre {
+    margin: 12px 16px 6px;
+    font-size: 11.5px; padding: 10px 12px;
+    border-radius: 4px;
+  }
+  .day ul {
+    margin: 8px 0 14px; padding: 0 16px 0 32px;
+    font-size: 13px; color: var(--ink-soft); line-height: 1.45;
+  }
+  .day ul li { margin-bottom: 4px; }
+  .day ul li strong { color: var(--gold); font-weight: 600; }
+  .day.green .d-label { background: var(--green); }
+
+  /* Step detail panels (click a diagram box to reveal) */
+  .step-details { margin: 4px 0 28px; min-height: 1px; }
+  .step-detail {
+    display: none;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 22px 26px;
+    box-shadow: var(--shadow);
+    margin: 14px 0 0;
+  }
+  /* JS-driven (no :target — that scroll-jumps). Step-1 has .active in markup. */
+  .step-detail.active {
+    display: block;
+    animation: revealStep 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes revealStep {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Selected SVG box highlight — a soft gold ring */
+  .diagram svg a.selected rect {
+    stroke: var(--gold);
+    stroke-width: 2.5;
+    filter: drop-shadow(0 0 8px rgba(184,137,58,0.35));
+  }
+  .diagram svg a.selected text:first-of-type { fill: var(--accent); }
+
+  /* ───── Persistent editorial masthead (sticky top) ─────
+     Always visible. Replaces both the in-cover masthead row and
+     the previous floating sticky-bar. */
+  .page-masthead {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, #0c1e2a 0%, #1a3b4d 60%, #1f4e79 100%);
+    color: #f4f1ea;
+    padding: 11px 0 12px;
+    border-bottom: 1px solid rgba(184,137,58,0.25);
+  }
+  /* Editorial atmosphere — same dot texture as the cover */
+  .page-masthead::before {
+    content: ""; position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  /* Hairline gold rule at the bottom — magazine masthead signature */
+  .page-masthead::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -1px;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%, rgba(184,137,58,0.0) 8%,
+      rgba(184,137,58,0.55) 50%,
+      rgba(184,137,58,0.0) 92%, transparent 100%);
+  }
+  .page-masthead .wrap {
+    position: relative; z-index: 1;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 24px;
+  }
+  .page-masthead .pm-brand {
+    display: flex; align-items: baseline; gap: 10px;
+    min-width: 0;
+  }
+  .page-masthead .pm-logo {
+    font-family: "Fraunces", serif; font-weight: 700;
+    font-size: 18px; color: #fff;
+    letter-spacing: -0.005em;
+  }
+  .page-masthead .pm-logo span { color: var(--gold); }
+  .page-masthead .pm-sep { color: rgba(255,255,255,0.25); font-size: 14px; }
+  .page-masthead .pm-meta {
+    font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: rgba(255,255,255,0.65); font-weight: 600;
+    white-space: nowrap;
+  }
+  .page-masthead .pm-nav { display: flex; align-items: center; gap: 2px; }
+  .page-masthead .pm-nav a {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px; font-weight: 600;
+    color: rgba(255,255,255,0.5);
+    padding: 5px 9px;
+    border-radius: 3px;
+    text-decoration: none;
+    border-bottom: 0;
+    line-height: 1;
+    transition: color 0.18s, background 0.18s;
+  }
+  .page-masthead .pm-nav a:hover {
+    color: #fff;
+    background: rgba(255,255,255,0.06);
+  }
+  .page-masthead .pm-nav a.current {
+    color: var(--gold);
+    background: rgba(184,137,58,0.14);
+  }
+  @media (max-width: 760px) {
+    .page-masthead .pm-nav { display: none; }
+    .page-masthead .pm-sep, .page-masthead .pm-meta { display: none; }
+  }
+  /* The old in-cover masthead is gone — hide if any legacy markup remains */
+  .cover .masthead { display: none; }
+
+  /* ───── Feature|Fix view toggle (top of §1) ───── */
+  .view-toggle {
+    display: inline-flex;
+    background: #fff;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 3px;
+    margin: 0 0 16px;
+    box-shadow: var(--shadow);
+  }
+  .view-toggle .vt-btn {
+    font-family: "Inter", sans-serif;
+    font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    font-weight: 700;
+    padding: 8px 22px;
+    border: 0;
+    background: transparent;
+    color: var(--gray);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: color 0.18s, background 0.18s;
+  }
+  .view-toggle .vt-btn:hover { color: var(--ink); }
+  .view-toggle .vt-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+  .view-toggle .vt-btn.active:hover { color: #fff; }
+  .walkthrough-view[hidden] { display: none; }
+  .step-detail .step-pill {
+    display: inline-block;
+    font-family: "Inter", sans-serif; font-weight: 700;
+    font-size: 10.5px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+  .step-detail h4 {
+    font-family: "Fraunces", serif; font-weight: 600;
+    font-size: 22px; color: var(--ink);
+    margin: 0 0 12px;
+    text-transform: none; letter-spacing: -0.005em;
+  }
+  .step-detail p {
+    font-size: 14.5px; color: var(--ink-soft);
+    margin: 0 0 10px;
+    line-height: 1.55;
+  }
+  .step-detail pre {
+    margin: 12px 0;
+    font-size: 12.5px;
+  }
+  .step-detail .step-note {
+    font-size: 13px; color: var(--ink-soft);
+    background: var(--paper-2);
+    border-left: 3px solid var(--rule);
+    padding: 10px 14px;
+    border-radius: 0 4px 4px 0;
+    margin-top: 12px;
+  }
+  .step-detail .step-link {
+    font-size: 13px; color: var(--gray);
+    margin-top: 10px; margin-bottom: 0;
+  }
+  .step-detail .step-link a {
+    color: var(--accent); border-bottom: 1px solid rgba(31,78,121,0.3);
+  }
+  /* Lucide-style inline cog icon used in setting notes */
+  .gear-icon {
+    display: inline-block;
+    width: 14px; height: 14px;
+    vertical-align: -2px;
+    margin-right: 6px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .step-detail .step-note.setting strong { color: var(--gold); }
+  .step-detail .step-note.setting code {
+    background: #fff;
+  }
+</style>
+</head>
+<body>
+
+<!-- ─────── Persistent editorial masthead (always visible) ─────── -->
+<header class="page-masthead" id="page-masthead">
+  <div class="wrap">
+    <div class="pm-brand">
+      <span class="pm-logo">STX <span>Skills</span></span>
+      <span class="pm-sep">·</span>
+      <span class="pm-meta">Walkthrough &amp; Reference · v1.6</span>
+    </div>
+    <nav class="pm-nav" aria-label="Section navigation">
+      <a href="#walkthrough" data-section="walkthrough" title="Walkthrough">01</a>
+      <a href="#types" data-section="types" title="Three types of commands">02</a>
+      <a href="#flows" data-section="flows" title="Features vs bug fixes">03</a>
+      <a href="#worktree" data-section="worktree" title="Worktree lifecycle">04</a>
+      <a href="#catalog" data-section="catalog" title="Skill catalog">05</a>
+      <a href="#settings" data-section="settings" title="Settings">06</a>
+      <a href="#pending" data-section="pending" title="Pending features">07</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ─────────────────────── COVER ─────────────────────── -->
+<header class="cover">
+  <div class="wrap">
+    <div class="cover-eyebrow">Documentation</div>
+    <h1>Multi-agent feature waves, <em>without the surprise</em>.</h1>
+    <p class="dek">
+      Install one package. Get slash-commands that drive waves, bug fixes,
+      commits, and PR merges — all built around the worktree model.
+    </p>
+    <div class="dash">
+      <div class="stat"><span class="n">8</span><span class="l">Skills shipped</span></div>
+      <div class="stat"><span class="n">2</span><span class="l">Main-bound</span></div>
+      <div class="stat"><span class="n teal">2</span><span class="l">Worktree-bound</span></div>
+      <div class="stat"><span class="n green">4</span><span class="l">Any-bound</span></div>
+      <div class="stat"><span class="n gold">v1.6</span><span class="l">Current release</span></div>
+    </div>
+  </div>
+</header>
+
+<article>
+  <div class="wrap">
+
+    <nav class="toc">
+      <h4>Contents</h4>
+      <ol>
+        <li><a href="#walkthrough">Walkthrough</a></li>
+        <li><a href="#types">Three types of commands</a></li>
+        <li><a href="#flows">Features vs bug fixes</a></li>
+        <li><a href="#worktree">Worktree lifecycle</a></li>
+        <li><a href="#catalog">Skill catalog</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#pending">Pending features</a></li>
+      </ol>
+    </nav>
+
+    <!-- ════════════════ §1 — WALKTHROUGH ════════════════ -->
+    <section id="walkthrough">
+      <div class="sect-head">
+        <span class="sect-n">01</span>
+        <span class="sect-name">Walkthrough</span>
+      </div>
+      <div class="view-toggle" role="tablist" aria-label="Walkthrough view">
+        <button class="vt-btn active" data-view="feature" role="tab" aria-selected="true">Feature</button>
+        <button class="vt-btn" data-view="fix" role="tab" aria-selected="false">Fix</button>
+      </div>
+
+      <!-- ════════ FEATURE VIEW ════════ -->
+      <div class="walkthrough-view view-feature">
+        <div class="sect-tag"><strong>Features become Waves of tasks</strong> — specialist agents solve them in parallel, behind three <strong>approval gates</strong>.</div>
+
+        <div class="diagram">
+          <svg viewBox="0 0 1100 130" role="img" aria-label="7-step feature walkthrough (clickable)">
+            <defs>
+              <!-- Lucide-style chevron-right: 1:2 ratio (8w × 12h), round caps & joins, stroke 2 -->
+              <marker id="arr" markerWidth="10" markerHeight="14" refX="8" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+                <path d="M2,1 L8,7 L2,13" fill="none" stroke="#1d6b76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </marker>
+              <linearGradient id="boxg" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%"  stop-color="#ffffff" />
+                <stop offset="100%" stop-color="#fbf8f1" />
+              </linearGradient>
+            </defs>
+            <a href="#walkthrough" data-step="1"><title>Step 1 · Install</title>
+              <rect x="33"  y="25" width="134" height="80" rx="6" fill="url(#boxg)" stroke="#d3c9b6" />
+              <text x="100" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">1 · Install</text>
+              <text x="100" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f4e79">npx stx-skills</text>
+              <text x="100" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">in project root</text>
+            </a>
+            <line x1="167" y1="65" x2="183" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arr)" />
+            <a href="#walkthrough" data-step="2"><title>Step 2 · On main</title>
+              <rect x="183" y="25" width="134" height="80" rx="6" fill="url(#boxg)" stroke="#d3c9b6" />
+              <text x="250" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">2 · On main</text>
+              <text x="250" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f4e79">git checkout main</text>
+              <text x="250" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">clean tree</text>
+            </a>
+            <line x1="317" y1="65" x2="333" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arr)" />
+            <a href="#walkthrough" data-step="3"><title>Step 3 · /stx-feature</title>
+              <rect x="333" y="25" width="134" height="80" rx="6" fill="url(#boxg)" stroke="#d3c9b6" />
+              <text x="400" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">3 · /stx-feature</text>
+              <text x="400" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1f4e79">main-bound</text>
+              <text x="400" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">creates a worktree</text>
+            </a>
+            <line x1="467" y1="65" x2="483" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arr)" />
+            <a href="#walkthrough" data-step="4"><title>Step 4 · Approve</title>
+              <rect x="483" y="25" width="134" height="80" rx="6" fill="url(#boxg)" stroke="#d3c9b6" />
+              <text x="550" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">4 · Approve</text>
+              <text x="550" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1f4e79">req · arch · qa</text>
+              <text x="550" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">Review and approve</text>
+            </a>
+            <line x1="617" y1="65" x2="633" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arr)" />
+            <a href="#walkthrough" data-step="5"><title>Step 5 · Dev wave</title>
+              <rect x="633" y="25" width="134" height="80" rx="6" fill="url(#boxg)" stroke="#d3c9b6" />
+              <text x="700" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">5 · Dev wave</text>
+              <text x="700" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1f4e79">tier-specialized</text>
+              <text x="700" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">test → code → test</text>
+            </a>
+            <line x1="767" y1="65" x2="783" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arr)" />
+            <a href="#walkthrough" data-step="6"><title>Step 6 · /stx-pr-merge</title>
+              <rect x="783" y="25" width="134" height="80" rx="6" fill="url(#boxg)" stroke="#d3c9b6" />
+              <text x="850" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">6 · /stx-pr-merge</text>
+              <text x="850" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1d6b76">worktree-bound</text>
+              <text x="850" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">commit · PR · merge</text>
+            </a>
+            <line x1="917" y1="65" x2="933" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arr)" />
+            <a href="#walkthrough" data-step="7"><title>Step 7 · Cleanup</title>
+              <rect x="933" y="25" width="134" height="80" rx="6" fill="#dfeee4" stroke="#2f6a45" />
+              <text x="1000" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">7 · Cleanup</text>
+              <text x="1000" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#2f6a45">worktree removed</text>
+              <text x="1000" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">main rebuilt &amp; clean</text>
+            </a>
+          </svg>
+          <div class="caption">Click any box to reveal its detail below. 7 steps · 3 user gates · zero hand-holding between gates.</div>
+        </div>
+
+        <div class="step-details">
+          <div data-step="1" class="step-detail active">
+            <span class="step-pill">Step 1 · Install</span>
+            <h4>You're on main and the skills aren't here yet</h4>
+            <p>A big change is inbound. If this harmless skill set isn't installed in your project, run one line. The installer only writes to <code>.claude/skills/</code> — nothing else in your project moves.</p>
+            <pre><span class="o">npx</span> github:sudiptosen/stx-skills</pre>
+            <p class="step-note">Re-running is the supported way to pick up updates. Your settings file (<code>.claude/stx-skill-settings.json</code>) is left alone on re-install.</p>
+          </div>
+
+          <div data-step="2" class="step-detail">
+            <span class="step-pill">Step 2 · On main</span>
+            <h4>The launching pad</h4>
+            <p>Start every wave on main. Skills that <em>spawn</em> a worktree refuse to run inside one — main is the launching pad because it's where the wave-starter skills live.</p>
+            <pre><span class="o">git</span> checkout main</pre>
+            <p class="step-note">If you're in a stale worktree, <code>cd</code> back to main first. The skill halts with a clear message if you forget.</p>
+          </div>
+
+          <div data-step="3" class="step-detail">
+            <span class="step-pill">Step 3 · /stx-feature</span>
+            <h4>One sentence is enough to seed the wave</h4>
+            <p>Type the slash command, describe the feature in plain words. The skill spawns a worktree at <code>.claude/worktrees/&lt;name&gt;/</code> and runs the Analyst. No production code is touched — just a conversation about what you're building.</p>
+            <pre>/stx-feature Implement multi-delete feature for Admins on Dashboard</pre>
+            <p class="step-link">For a single reproducible bug, use <a href="#sk-stx-fix"><code>/stx-fix</code></a> instead. Full reference → <a href="#sk-stx-feature">/stx-feature in the catalog</a>.</p>
+          </div>
+
+          <div data-step="4" class="step-detail">
+            <span class="step-pill">Step 4 · Approve</span>
+            <h4>Three cheap moments to redirect</h4>
+            <p>Analyst writes <code>requirement-verse.html</code>, you approve. Architect writes <code>architecture-verse.html</code>, you approve — <strong>scope freezes</strong>. QA writes failing tests in <code>qa-verse.html</code>, you approve — <strong>dry-run boundary</strong> reached.</p>
+            <p>Each gate is your chance to redirect before the expensive Dev wave starts. Catching a misread requirement at Gate 1 costs minutes; catching it after the Dev wave costs hours.</p>
+            <p class="step-link">Compare with the bug-fix flow → <a href="#flows">§3 Features vs bug fixes</a>.</p>
+          </div>
+
+          <div data-step="5" class="step-detail">
+            <span class="step-pill">Step 5 · Dev wave</span>
+            <h4>One agent per tier, in parallel</h4>
+            <p>db / service / api / ui — each tier has a specialized Dev agent prompt. Multiple Dev agents run in parallel where their <code>scope_paths</code> don't overlap. QA re-runs every test after each Dev cycle — a Dev calling "green" doesn't end the loop until QA confirms independently.</p>
+            <p class="step-note"><strong>Iteration caps.</strong> Soft 3 per task → Architect re-engages. Hard 5 → wave halts with a handoff doc.</p>
+          </div>
+
+          <div data-step="6" class="step-detail">
+            <span class="step-pill">Step 6 · /stx-pr-merge</span>
+            <h4>One chain, ten steps, no babysitting</h4>
+            <p>Run from inside the worktree when all tests are green. It commits, pushes, opens the PR, builds <em>twice</em> (once in the worktree, once after merge), squash-merges, refreshes main. One approval sentence covers the whole chain.</p>
+            <pre>/stx-pr-merge</pre>
+            <p class="step-link">Full reference → <a href="#sk-stx-pr-merge">/stx-pr-merge in the catalog</a>.</p>
+          </div>
+
+          <div data-step="7" class="step-detail">
+            <span class="step-pill">Step 7 · Cleanup</span>
+            <h4>Worktree gone, main updated</h4>
+            <p>The same skill removes the worktree, deletes the local branch, leaves main rebuilt and clean. The wave artifacts (requirement-verse, architecture-verse, qa-verse, result.html) ride along in the squash commit — so they're preserved in main's history.</p>
+            <p class="step-note setting">
+              <svg class="gear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Change by running <code>/stx-settings</code>. See <a href="#settings">§6 Settings</a>.
+            </p>
+            <p class="step-note">If a wave <em>halted</em> instead of finishing, run <code>/stx-report</code> first to write a single HTML report into main's <code>docs/</code> — that survives worktree removal.</p>
+            <p class="step-link">More → <a href="#worktree">§4 Worktree lifecycle</a>.</p>
+          </div>
+        </div>
+
+        <h3>Implement admin multi-delete</h3>
+        <p>Sarah is asked to add multi-row delete to the admin Dashboard. Three calendar days, two skills, one PR.</p>
+
+        <div class="days">
+          <div class="day">
+            <div class="d-label">Day 1 · Monday</div>
+            <div class="d-where">$ pwd: /repo · on main</div>
+            <pre>/stx-feature Implement multi-delete feature for Admins on Dashboard</pre>
+            <ul>
+              <li>Worktree spawned at <code>.claude/worktrees/admin-multi-delete/</code></li>
+              <li>Analyst → 1 Feature, acceptance criteria</li>
+              <li><strong>Gate 1 ✓</strong> requirement-verse.html</li>
+              <li>Architect → 4 Tasks: db migration · service · API route · UI button</li>
+              <li><strong>Gate 2 ✓</strong> architecture-verse.html · scope frozen</li>
+              <li>QA → 4 failing Playwright tests, one per Task</li>
+              <li><strong>Gate 3 ✓</strong> qa-verse.html · dry-run boundary</li>
+              <li>Sarah stops here. Worktree persists overnight.</li>
+            </ul>
+          </div>
+          <div class="day">
+            <div class="d-label">Day 2 · Tuesday</div>
+            <div class="d-where">$ pwd: /repo/.claude/worktrees/admin-multi-delete</div>
+            <pre>"proceed past dry-run"</pre>
+            <ul>
+              <li>4 Dev agents spawn — one per tier (db / service / api / ui)</li>
+              <li>Run in parallel where their <code>scope_paths</code> don't overlap</li>
+              <li>QA re-runs each test after every Dev cycle</li>
+              <li>Two tasks pass on first iteration, one on second, one on third</li>
+              <li>All 4 tests green by end of day</li>
+            </ul>
+          </div>
+          <div class="day green">
+            <div class="d-label">Day 3 · Wednesday</div>
+            <div class="d-where">$ pwd: /repo/.claude/worktrees/admin-multi-delete</div>
+            <pre>/stx-pr-merge</pre>
+            <ul>
+              <li>commit → push → <code>gh pr create</code></li>
+              <li>Build #1 in feature worktree · pass</li>
+              <li><code>gh pr merge --squash</code> on PR #42</li>
+              <li>Refresh main with <code>--ff-only</code></li>
+              <li>Build #2 in main · pass</li>
+              <li>Worktree removed · local branch deleted</li>
+              <li><strong>✓ main has the feature.</strong> Wave artifacts ride along in the squash commit.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ FIX VIEW ════════ -->
+      <div class="walkthrough-view view-fix" hidden>
+        <div class="sect-tag"><strong>Bugs become reproducible tests</strong> — QA writes the failing test, the Coder makes the smallest change to pass, capped at five iterations.</div>
+
+        <div class="diagram">
+          <svg viewBox="0 0 1100 130" role="img" aria-label="7-step bug-fix walkthrough (clickable)">
+            <defs>
+              <!-- Lucide-style chevron-right: 1:2 ratio (8w × 12h), round caps & joins, stroke 2 -->
+              <marker id="arrFx" markerWidth="10" markerHeight="14" refX="8" refY="7" orient="auto" markerUnits="userSpaceOnUse">
+                <path d="M2,1 L8,7 L2,13" fill="none" stroke="#1d6b76" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </marker>
+              <linearGradient id="boxgFx" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%"  stop-color="#ffffff" />
+                <stop offset="100%" stop-color="#fbf8f1" />
+              </linearGradient>
+            </defs>
+            <a href="#walkthrough" data-step="1"><title>Step 1 · Install</title>
+              <rect x="33"  y="25" width="134" height="80" rx="6" fill="url(#boxgFx)" stroke="#d3c9b6" />
+              <text x="100" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">1 · Install</text>
+              <text x="100" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f4e79">npx stx-skills</text>
+              <text x="100" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">in project root</text>
+            </a>
+            <line x1="167" y1="65" x2="183" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arrFx)" />
+            <a href="#walkthrough" data-step="2"><title>Step 2 · On main</title>
+              <rect x="183" y="25" width="134" height="80" rx="6" fill="url(#boxgFx)" stroke="#d3c9b6" />
+              <text x="250" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">2 · On main</text>
+              <text x="250" y="73" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#1f4e79">git checkout main</text>
+              <text x="250" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">clean tree</text>
+            </a>
+            <line x1="317" y1="65" x2="333" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arrFx)" />
+            <a href="#walkthrough" data-step="3"><title>Step 3 · /stx-fix</title>
+              <rect x="333" y="25" width="134" height="80" rx="6" fill="url(#boxgFx)" stroke="#d3c9b6" />
+              <text x="400" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">3 · /stx-fix</text>
+              <text x="400" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1f4e79">main-bound</text>
+              <text x="400" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">interview + worktree</text>
+            </a>
+            <line x1="467" y1="65" x2="483" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arrFx)" />
+            <a href="#walkthrough" data-step="4"><title>Step 4 · Approve</title>
+              <rect x="483" y="25" width="134" height="80" rx="6" fill="url(#boxgFx)" stroke="#d3c9b6" />
+              <text x="550" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">4 · Approve</text>
+              <text x="550" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1f4e79">single gate</text>
+              <text x="550" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">test is the spec</text>
+            </a>
+            <line x1="617" y1="65" x2="633" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arrFx)" />
+            <a href="#walkthrough" data-step="5"><title>Step 5 · QA → Coder loop</title>
+              <rect x="633" y="25" width="134" height="80" rx="6" fill="url(#boxgFx)" stroke="#d3c9b6" />
+              <text x="700" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">5 · QA → Coder</text>
+              <text x="700" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1f4e79">failing test → fix</text>
+              <text x="700" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">loop ≤ 5×</text>
+            </a>
+            <line x1="767" y1="65" x2="783" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arrFx)" />
+            <a href="#walkthrough" data-step="6"><title>Step 6 · /stx-pr-merge</title>
+              <rect x="783" y="25" width="134" height="80" rx="6" fill="url(#boxgFx)" stroke="#d3c9b6" />
+              <text x="850" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">6 · /stx-pr-merge</text>
+              <text x="850" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1d6b76">worktree-bound</text>
+              <text x="850" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">commit · PR · merge</text>
+            </a>
+            <line x1="917" y1="65" x2="933" y2="65" stroke="#1d6b76" stroke-width="2" marker-end="url(#arrFx)" />
+            <a href="#walkthrough" data-step="7"><title>Step 7 · Cleanup</title>
+              <rect x="933" y="25" width="134" height="80" rx="6" fill="#dfeee4" stroke="#2f6a45" />
+              <text x="1000" y="53" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">7 · Cleanup</text>
+              <text x="1000" y="73" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#2f6a45">worktree removed</text>
+              <text x="1000" y="89" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">main rebuilt &amp; clean</text>
+            </a>
+          </svg>
+          <div class="caption">Click any box to reveal its detail below. 7 steps · 1 pre-Dev gate · loop capped at 5 iterations.</div>
+        </div>
+
+        <div class="step-details">
+          <div data-step="1" class="step-detail active">
+            <span class="step-pill">Step 1 · Install</span>
+            <h4>You're on main and the skills aren't here yet</h4>
+            <p>A bug is open. If this harmless skill set isn't installed in your project, run one line. The installer only writes to <code>.claude/skills/</code> — nothing else in your project moves.</p>
+            <pre><span class="o">npx</span> github:sudiptosen/stx-skills</pre>
+            <p class="step-note">Re-running is the supported way to pick up updates. Your settings file (<code>.claude/stx-skill-settings.json</code>) is left alone on re-install.</p>
+          </div>
+
+          <div data-step="2" class="step-detail">
+            <span class="step-pill">Step 2 · On main</span>
+            <h4>The launching pad</h4>
+            <p>Start every fix on main. <code>/stx-fix</code> spawns a worktree from main — it refuses to run inside an existing one. main is where the wave-starter skills live.</p>
+            <pre><span class="o">git</span> checkout main</pre>
+            <p class="step-note">If you're in a stale worktree, <code>cd</code> back to main first.</p>
+          </div>
+
+          <div data-step="3" class="step-detail">
+            <span class="step-pill">Step 3 · /stx-fix</span>
+            <h4>Repro first, then describe it</h4>
+            <p>The skill interviews you for the bug — title, issues (numbered), repro URL/steps, expected behavior. It spawns a worktree at <code>.claude/worktrees/&lt;name&gt;/</code> and renders a complete prompt from a template.</p>
+            <pre>/stx-fix Timer offset wrong after DST</pre>
+            <p class="step-link">For a multi-task feature, use <a href="#sk-stx-feature"><code>/stx-feature</code></a> instead. Full reference → <a href="#sk-stx-fix">/stx-fix in the catalog</a>.</p>
+          </div>
+
+          <div data-step="4" class="step-detail">
+            <span class="step-pill">Step 4 · Approve</span>
+            <h4>The test IS the spec</h4>
+            <p>Read the rendered prompt. It includes title, issues (numbered), repro, expected behavior, scope, out-of-scope. Approve, edit a field, or cancel — this is the only pre-Dev gate.</p>
+            <p>There's no architecture phase because for a bug, the failing test <em>is</em> the architecture. The Coder makes that test pass.</p>
+          </div>
+
+          <div data-step="5" class="step-detail">
+            <span class="step-pill">Step 5 · QA → Coder loop</span>
+            <h4>Failing test first, smallest change to make it pass</h4>
+            <p>QA writes the failing test in the right runner (Playwright for UI bugs, Vitest for logic). Coder reads it and makes the smallest change. QA re-runs independently. Green? done. Red? back to Coder.</p>
+            <p class="step-note"><strong>Hard cap: 5 iterations.</strong> Coder MUST NOT edit the test file — touching it halts the loop and escalates.</p>
+          </div>
+
+          <div data-step="6" class="step-detail">
+            <span class="step-pill">Step 6 · /stx-pr-merge</span>
+            <h4>One chain, ten steps, no babysitting</h4>
+            <p>Run from inside the worktree once the test is green. It commits, pushes, opens the PR, builds <em>twice</em> (once in the worktree, once after merge), squash-merges, refreshes main. One approval sentence covers the whole chain.</p>
+            <pre>/stx-pr-merge</pre>
+            <p class="step-link">Full reference → <a href="#sk-stx-pr-merge">/stx-pr-merge in the catalog</a>.</p>
+          </div>
+
+          <div data-step="7" class="step-detail">
+            <span class="step-pill">Step 7 · Cleanup</span>
+            <h4>Worktree gone, main updated</h4>
+            <p>The same skill removes the worktree, deletes the local branch, leaves main rebuilt and clean. The fix test rides along in the squash commit — so the bug stays caught if it ever returns.</p>
+            <p class="step-note setting">
+              <svg class="gear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+              Change by running <code>/stx-settings</code>. See <a href="#settings">§6 Settings</a>.
+            </p>
+            <p class="step-link">More → <a href="#worktree">§4 Worktree lifecycle</a>.</p>
+          </div>
+        </div>
+
+        <h3>Fix timer offset after DST</h3>
+        <p>Bob is asked to fix a timer that drifts by an hour after daylight saving switches. Two calendar days, two skills, one PR.</p>
+
+        <div class="days">
+          <div class="day">
+            <div class="d-label">Day 1 · Monday</div>
+            <div class="d-where">$ pwd: /repo · on main</div>
+            <pre>/stx-fix Timer offset wrong after DST</pre>
+            <ul>
+              <li>Worktree spawned at <code>.claude/worktrees/timer-offset-dst/</code></li>
+              <li>Interview: title, issues, repro, expected</li>
+              <li>Rendered prompt previewed</li>
+              <li><strong>Acceptance gate ✓</strong> approved as-is</li>
+              <li>QA writes 1 failing Playwright spec</li>
+              <li>Coder iter 1: tweak offset · QA reruns → red (wrong cause)</li>
+              <li>Coder iter 2: real fix in DST helper · QA reruns → green</li>
+              <li>Day ends with the test green. No merge yet.</li>
+            </ul>
+          </div>
+          <div class="day green">
+            <div class="d-label">Day 2 · Tuesday</div>
+            <div class="d-where">$ pwd: /repo/.claude/worktrees/timer-offset-dst</div>
+            <pre>/stx-pr-merge</pre>
+            <ul>
+              <li>commit → push → <code>gh pr create</code></li>
+              <li>Build #1 in feature worktree · pass</li>
+              <li><code>gh pr merge --squash</code> on PR #58</li>
+              <li>Refresh main with <code>--ff-only</code></li>
+              <li>Build #2 in main · pass</li>
+              <li>Worktree removed · local branch deleted</li>
+              <li><strong>✓ main has the fix.</strong> The regression test rides along in the squash commit.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════ Mental model — shared across both views ════════ -->
+      <h3 id="mental-model">The mental model</h3>
+      <div class="principles">
+        <div class="principle">
+          <div class="num">01</div>
+          <h4>main never holds half-done code</h4>
+          <p>Every in-flight change lives in a worktree under <code>.claude/worktrees/&lt;name&gt;/</code>. main only sees commits that have been merged. Discard a worktree and you lose that work — main is unaffected.</p>
+        </div>
+        <div class="principle">
+          <div class="num">02</div>
+          <h4>Skills know where they belong</h4>
+          <p>Every skill is <strong>main-bound</strong>, <strong>worktree-bound</strong>, or <strong>any-bound</strong>. Run from the wrong checkout, the skill halts. No nested worktrees, no targeting the wrong tree.</p>
+        </div>
+      </div>
+
+      <div class="followon">
+        <strong>Everything else follows:</strong>
+        <ul>
+          <li><code>/stx-feature</code> and <code>/stx-fix</code> start on main because they <em>spawn</em> a worktree.</li>
+          <li><code>/stx-pr-merge</code> and <code>/stx-report</code> run inside the worktree because that's where the work lives.</li>
+          <li><code>/stx-checkin</code>, <code>/stx-image</code>, <code>/stx-help</code>, <code>/stx-help-html</code> are branch-agnostic — they don't care.</li>
+          <li>The settings file lives in main's checkout; each new worktree gets a copy at creation.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ════════════════ §2 — TYPES ════════════════ -->
+    <section id="types">
+      <div class="sect-head">
+        <span class="sect-n">02</span>
+        <span class="sect-name">Three types of commands</span>
+      </div>
+      <div class="sect-tag">Where you run a skill tells you what it does.</div>
+
+      <div class="legend">
+        <div class="row">
+          <div class="badge"><span class="type type-main">main-bound</span></div>
+          <div class="txt"><strong>You're on main</strong> and want to start something. The skill spawns a worktree.</div>
+        </div>
+        <div class="row">
+          <div class="badge"><span class="type type-wt">worktree-bound</span></div>
+          <div class="txt"><strong>You're in a worktree</strong> doing feature work. The skill operates on it (commit, merge, report, clean).</div>
+        </div>
+        <div class="row">
+          <div class="badge"><span class="type type-any">any-bound</span></div>
+          <div class="txt"><strong>Runs anywhere.</strong> Utilities: commit, image audit, docs. Branch-agnostic.</div>
+        </div>
+      </div>
+
+      <div class="types3">
+        <div class="tb">
+          <div class="head">
+            <span class="label">main-bound</span>
+            <span class="type type-main">main</span>
+          </div>
+          <ul>
+            <li>/stx-feature<span class="when">initiate a multi-task wave for big features</span></li>
+            <li>/stx-fix<span class="when">single-bug QA→Coder loop</span></li>
+            <li>npx stx-skills<span class="when">install / refresh skills</span></li>
+            <li>/stx-skill-settings<span class="when">view/edit settings (planned)</span></li>
+          </ul>
+        </div>
+        <div class="tb any">
+          <div class="head">
+            <span class="label">any-bound</span>
+            <span class="type type-any">any</span>
+          </div>
+          <ul>
+            <li>/stx-checkin<span class="when">commit + push with security scan</span></li>
+            <li>/stx-image<span class="when">audit / resize project images</span></li>
+            <li>/stx-help<span class="when">terse text help</span></li>
+            <li>/stx-help-html<span class="when">this walkthrough</span></li>
+          </ul>
+        </div>
+        <div class="tb wt">
+          <div class="head">
+            <span class="label">worktree-bound</span>
+            <span class="type type-wt">worktree</span>
+          </div>
+          <ul>
+            <li>/stx-pr-merge<span class="when">commit→PR→build→merge→cleanup</span></li>
+            <li>/stx-report<span class="when">HTML report of worktree changes</span></li>
+            <li>/stx-feature --resume<span class="when">resume halted wave (planned)</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>Why types matter.</strong> A wave-starter run inside a worktree would nest worktrees inside worktrees. A cleanup skill run from main would target the wrong tree. The type tells the skill where it's allowed to run.
+      </div>
+    </section>
+
+    <!-- ════════════════ §3 — FEATURES vs BUG FIXES ════════════════ -->
+    <section id="flows">
+      <div class="sect-head">
+        <span class="sect-n">03</span>
+        <span class="sect-name">Features vs bug fixes</span>
+      </div>
+      <div class="sect-tag">Two flows, two skills. Pick the one that matches the work.</div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 1100 460" role="img" aria-label="Feature wave vs bug fix">
+          <defs>
+            <marker id="arrF" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L9,3 L0,6" fill="none" stroke="#1f4e79" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </marker>
+            <marker id="arrB" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L9,3 L0,6" fill="none" stroke="#b8893a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </marker>
+            <marker id="arrLoop" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L9,3 L0,6" fill="none" stroke="#b13d2c" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </marker>
+          </defs>
+
+          <rect x="40" y="20" width="490" height="48" rx="6" fill="#e2eaf3" stroke="#1f4e79" />
+          <text x="285" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" letter-spacing="2.5" fill="#1f4e79">FEATURE WAVE</text>
+          <text x="285" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#0d1421">/stx-feature</text>
+
+          <rect x="570" y="20" width="490" height="48" rx="6" fill="#fcf2dc" stroke="#b8893a" />
+          <text x="815" y="42" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="700" letter-spacing="2.5" fill="#b8893a">BUG FIX</text>
+          <text x="815" y="60" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="13" fill="#0d1421">/stx-fix</text>
+
+          <g>
+            <rect x="180" y="90"  width="210" height="44" rx="4" fill="#fff" stroke="#1f4e79" />
+            <text x="285" y="110" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">Analyst</text>
+            <text x="285" y="125" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">features &amp; acceptance criteria</text>
+            <text x="80"  y="118" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#b8893a">▶ Gate 1</text>
+
+            <line x1="285" y1="135" x2="285" y2="155" stroke="#1f4e79" stroke-width="1.8" marker-end="url(#arrF)" />
+
+            <rect x="180" y="160" width="210" height="44" rx="4" fill="#fff" stroke="#1f4e79" />
+            <text x="285" y="180" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">Architect</text>
+            <text x="285" y="195" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">tier-tagged tasks · scope_paths</text>
+            <text x="80"  y="188" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#b8893a">▶ Gate 2</text>
+
+            <line x1="285" y1="205" x2="285" y2="225" stroke="#1f4e79" stroke-width="1.8" marker-end="url(#arrF)" />
+
+            <rect x="180" y="230" width="210" height="44" rx="4" fill="#fff" stroke="#1f4e79" />
+            <text x="285" y="250" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">QA</text>
+            <text x="285" y="265" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">failing tests, one per task</text>
+            <text x="80"  y="258" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#b8893a">▶ Gate 3</text>
+
+            <line x1="285" y1="275" x2="285" y2="295" stroke="#1f4e79" stroke-width="1.8" marker-end="url(#arrF)" />
+
+            <rect x="180" y="300" width="210" height="44" rx="4" fill="#fff" stroke="#1f4e79" />
+            <text x="285" y="320" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">Dev wave</text>
+            <text x="285" y="335" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">db / service / api / ui agents</text>
+
+            <line x1="285" y1="345" x2="285" y2="365" stroke="#1f4e79" stroke-width="1.8" marker-end="url(#arrF)" />
+
+            <rect x="180" y="370" width="210" height="44" rx="4" fill="#dfeee4" stroke="#2f6a45" />
+            <text x="285" y="390" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">done</text>
+            <text x="285" y="405" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#2f6a45">all tasks green</text>
+
+            <text x="285" y="438" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6f7686">4 agents · 3 gates · N tasks across tiers</text>
+          </g>
+
+          <g>
+            <rect x="710" y="90" width="210" height="44" rx="4" fill="#fff" stroke="#b8893a" />
+            <text x="815" y="110" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">QA writes failing test</text>
+            <text x="815" y="125" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">repro encoded in code</text>
+            <text x="950" y="118" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#b8893a">▶ Approve</text>
+
+            <line x1="815" y1="135" x2="815" y2="160" stroke="#b8893a" stroke-width="1.8" marker-end="url(#arrB)" />
+
+            <rect x="710" y="165" width="210" height="44" rx="4" fill="#fff" stroke="#b8893a" />
+            <text x="815" y="185" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">Coder fixes</text>
+            <text x="815" y="200" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">smallest change to pass</text>
+
+            <line x1="815" y1="210" x2="815" y2="235" stroke="#b8893a" stroke-width="1.8" marker-end="url(#arrB)" />
+
+            <rect x="710" y="240" width="210" height="44" rx="4" fill="#fff" stroke="#b8893a" />
+            <text x="815" y="260" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">QA re-runs test</text>
+            <text x="815" y="275" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">green? done. red? loop.</text>
+
+            <path d="M 920 262 Q 1000 262 1000 187 Q 1000 165 920 165" fill="none" stroke="#b13d2c" stroke-width="1.8" marker-end="url(#arrLoop)" />
+            <text x="1010" y="218" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#b13d2c">loop</text>
+            <text x="1010" y="233" font-family="Inter, sans-serif" font-size="9.5" fill="#6f7686">≤ 5×</text>
+
+            <line x1="815" y1="285" x2="815" y2="365" stroke="#b8893a" stroke-width="1.8" stroke-dasharray="2,4" />
+
+            <rect x="710" y="370" width="210" height="44" rx="4" fill="#dfeee4" stroke="#2f6a45" />
+            <text x="815" y="390" text-anchor="middle" font-family="Fraunces, serif" font-size="14" font-weight="600" fill="#0d1421">done</text>
+            <text x="815" y="405" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#2f6a45">test green, cap not hit</text>
+
+            <text x="815" y="438" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#6f7686">2 agents · 1 cap · 1 bug (or small cluster)</text>
+          </g>
+
+          <line x1="550" y1="80" x2="550" y2="445" stroke="#d3c9b6" stroke-width="1" stroke-dasharray="3,3" />
+        </svg>
+        <div class="caption">Left: a feature decomposes into multiple tasks across tiers. Right: a bug stays a single loop with a hard iteration cap.</div>
+      </div>
+
+      <table class="deftbl">
+        <thead>
+          <tr><th></th><th>Feature wave (<code>/stx-feature</code>)</th><th>Bug fix (<code>/stx-fix</code>)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Agents</strong></td><td>4 (Analyst, Architect, QA, Dev×N)</td><td>2 (QA, Coder)</td></tr>
+          <tr><td><strong>Pre-Dev gates</strong></td><td>3 (requirement, architecture, qa)</td><td>1 (prompt acceptance)</td></tr>
+          <tr><td><strong>Decomposes into</strong></td><td>1..N Features → 1..N Tasks per Feature</td><td>1..N symptoms, all in one loop</td></tr>
+          <tr><td><strong>Tier specialization</strong></td><td>Yes — db / service / api / ui</td><td>No</td></tr>
+          <tr><td><strong>Parallelism</strong></td><td>Up to N Devs on disjoint scope_paths</td><td>Sequential</td></tr>
+          <tr><td><strong>Iteration caps</strong></td><td>Soft 3 / hard 5 <em>per task</em></td><td>Hard 5 <em>total</em></td></tr>
+          <tr><td><strong>Artifacts</strong></td><td>wave-state.json + 4 HTML files</td><td>handoff.md (only on halt)</td></tr>
+          <tr><td><strong>Use when</strong></td><td>Multi-task work spanning tiers</td><td>One reproducible bug</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ════════════════ §4 — WORKTREE ════════════════ -->
+    <section id="worktree">
+      <div class="sect-head">
+        <span class="sect-n">04</span>
+        <span class="sect-name">Worktree lifecycle</span>
+      </div>
+      <div class="sect-tag">Create · work · report · discard.</div>
+
+      <div class="diagram">
+        <svg viewBox="0 0 1100 320" role="img" aria-label="Worktree lifecycle timeline">
+          <defs>
+            <marker id="arrW" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L9,3 L0,6" fill="none" stroke="#1d6b76" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </marker>
+            <marker id="arrG" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+              <path d="M0,0 L9,3 L0,6" fill="none" stroke="#b8893a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            </marker>
+          </defs>
+
+          <line x1="40"  y1="60"  x2="1060" y2="60"  stroke="#1f4e79" stroke-width="3" />
+          <text x="40"   y="40"   font-family="Inter, sans-serif" font-size="11" font-weight="700" letter-spacing="2" fill="#1f4e79">MAIN</text>
+          <circle cx="120" cy="60" r="8" fill="#1f4e79" />
+          <text x="120"   y="40"   text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#2a3447">on main</text>
+          <circle cx="950" cy="60" r="8" fill="#2f6a45" />
+          <text x="950"   y="40"   text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#2f6a45">main updated</text>
+
+          <line x1="170" y1="170" x2="900" y2="170" stroke="#1d6b76" stroke-width="3" />
+          <text x="40"   y="174"  font-family="Inter, sans-serif" font-size="11" font-weight="700" letter-spacing="2" fill="#1d6b76">WORKTREE</text>
+
+          <path d="M 170 70 Q 170 120 170 170" fill="none" stroke="#1d6b76" stroke-width="2" marker-end="url(#arrW)" />
+          <text x="180" y="110" font-family="Inter, sans-serif" font-size="11" fill="#1d6b76">git worktree add</text>
+
+          <path d="M 900 170 Q 900 120 900 70" fill="none" stroke="#1d6b76" stroke-width="2" marker-end="url(#arrW)" />
+          <text x="775" y="110" font-family="Inter, sans-serif" font-size="11" fill="#1d6b76">squash-merge · refresh</text>
+
+          <g>
+            <a href="#flows"><title>Wave work — see §3 for the agent flow</title>
+              <rect x="190" y="188" width="640" height="48" rx="4" fill="#fff" stroke="#1d6b76" stroke-width="1.5" />
+              <text x="510" y="210" text-anchor="middle" font-family="Fraunces, serif" font-size="15" font-weight="600" fill="#0d1421">Wave work</text>
+              <text x="510" y="226" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#6f7686">Analyst → Architect → QA → Dev → Report · 3 user gates inside · <tspan fill="#1f4e79" text-decoration="underline">see §3 for detail</tspan></text>
+            </a>
+          </g>
+
+          <rect x="190" y="260" width="200" height="40" rx="4" fill="#fcf2dc" stroke="#b8893a" />
+          <text x="290" y="278" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#b8893a">stx-skill-settings.json</text>
+          <text x="290" y="292" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#2a3447">copied from main at creation</text>
+          <path d="M 290 234 L 290 260" fill="none" stroke="#b8893a" stroke-width="1.5" stroke-dasharray="3,3" marker-end="url(#arrG)" />
+
+          <text x="900" y="200" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="700" fill="#b13d2c">or discard</text>
+          <text x="900" y="216" text-anchor="middle" font-family="Inter, sans-serif" font-size="9.5" fill="#6f7686">if halted</text>
+        </svg>
+        <div class="caption">A worktree is born on main, lives through four agent phases, then either merges back (success) or is discarded — /stx-report writes its artifact to main first.</div>
+      </div>
+
+      <h4>What lives where</h4>
+      <table class="deftbl">
+        <thead><tr><th>Location</th><th>Contents</th><th>Survives reinstall?</th></tr></thead>
+        <tbody>
+          <tr><td class="k">.claude/skills/&lt;name&gt;/</td><td>Skill source + CLI binary</td><td>No — installer wipes &amp; replaces</td></tr>
+          <tr><td class="k">.claude/stx-skill-settings.json</td><td>Project-wide settings</td><td>Yes — outside installer sweep</td></tr>
+          <tr><td class="k">.claude/worktrees/&lt;name&gt;/</td><td>The feature worktree itself</td><td>Yes — outside installer sweep</td></tr>
+          <tr><td class="k">&lt;worktree&gt;/docs/waves/&lt;id&gt;/</td><td>wave-state.json + 4 HTML artifacts</td><td>Committed to feature branch</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Directory shape</h4>
+      <pre><span class="c"># After a couple of waves:</span>
+&lt;project&gt;/
+├── .claude/
+│   ├── skills/
+│   │   ├── stx-feature/
+│   │   ├── stx-fix/
+│   │   └── ...
+│   ├── stx-skill-settings.json   <span class="c">← persistent, checked in</span>
+│   └── worktrees/
+│       ├── wave-admin-multi-delete/
+│       └── bugfix-timer-offset/
+└── ...</pre>
+
+      <div class="callout callout-teal">
+        <strong>Discarding without losing work.</strong> Before <code>git worktree remove</code> on a halted wave, run <code>/stx-report</code> from inside the worktree — it writes an HTML report to main's <code>docs/</code> dir, outside the worktree being torn down.
+      </div>
+    </section>
+
+    <!-- ════════════════ §5 — CATALOG ════════════════ -->
+    <section id="catalog">
+      <div class="sect-head">
+        <span class="sect-n">05</span>
+        <span class="sect-name">Skill catalog</span>
+      </div>
+      <div class="sect-tag">Click any row to expand.</div>
+
+      <details class="skill" id="sk-stx-feature">
+        <summary>
+          <span class="ico">F</span>
+          <span class="nm">/stx-feature<span class="one">Multi-agent feature wave. Analyst → Architect → QA → Dev. Three gates, tier-specialized Devs, suspicious-change tracking.</span></span>
+          <span class="type type-main">main-bound</span>
+          <span class="ver">v1.6</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>Drives a multi-agent feature wave. Spawns a worktree, runs Analyst → Architect → QA in sequence (each behind a user gate), then dispatches tier-specialized Dev agents under QA control until all tests are green.</p>
+
+          <div class="blocks">
+            <div class="block use"><div class="lbl">Use when</div><ul>
+              <li>Feature decomposes into multiple tasks across tiers</li>
+              <li>You want failing tests written before any code</li>
+              <li>You want a written architecture decision, not freeform</li>
+            </ul></div>
+            <div class="block dontuse"><div class="lbl">Don't use when</div><ul>
+              <li>It's a single bug → <code>/stx-fix</code></li>
+              <li>Refactor with no behavior change (no failing test)</li>
+              <li>You're already inside a worktree (main-bound)</li>
+            </ul></div>
+          </div>
+
+          <h4>Invocations</h4>
+          <pre><span class="c"># Fully interactive</span>
+/stx-feature
+
+<span class="c"># Seed initial_request, then interactive</span>
+/stx-feature Implement multi-delete feature for Admins on Dashboard
+
+<span class="c"># Resume a halted wave (planned)</span>
+/stx-feature <span class="o">--resume</span> wave-admin-multi-delete-7f3a</pre>
+
+          <h4>Artifacts produced</h4>
+          <table class="deftbl">
+            <thead><tr><th>File</th><th>Owner</th><th>Purpose</th></tr></thead>
+            <tbody>
+              <tr><td class="k">wave-state.json</td><td>Orchestrator</td><td>Canonical state — features, tasks, suspicious[], escalations[]</td></tr>
+              <tr><td class="k">requirement-verse.html</td><td>Analyst</td><td>Gate 1 artifact</td></tr>
+              <tr><td class="k">architecture-verse.html</td><td>Architect</td><td>Gate 2 — freezes out-of-scope</td></tr>
+              <tr><td class="k">qa-verse.html</td><td>QA</td><td>Gate 3 — dry-run boundary</td></tr>
+              <tr><td class="k">result.html</td><td>Orchestrator</td><td>End-of-wave summary</td></tr>
+              <tr><td class="k">handoff.md</td><td>Orchestrator</td><td>Only on halt</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Iteration caps</h4>
+          <ul>
+            <li><strong>Soft cap 3 / task</strong> — Architect re-engages, may append Revision N to architecture-verse.</li>
+            <li><strong>Hard cap 5 / task</strong> — wave halts, handoff.md written.</li>
+            <li><strong>Suspicious-changes 3 / task</strong> — auto-halt task (scope-drift, test-file touch, mock-of-SUT, build-break).</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-fix">
+        <summary>
+          <span class="ico">B</span>
+          <span class="nm">/stx-fix<span class="one">Two-agent QA → Coder loop for a known bug. Failing test first, smallest change to make it pass.</span></span>
+          <span class="type type-main">main-bound</span>
+          <span class="ver">v1.0</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>QA → Coder loop against one reproducible bug. Interview → render prompt → user acceptance → loop. The Coder cannot edit test files; touching them halts the loop.</p>
+
+          <div class="blocks">
+            <div class="block use"><div class="lbl">Use when</div><ul>
+              <li>Reproducible bug with concrete URL/state/steps</li>
+              <li>You want failing test first, then minimal fix</li>
+              <li>Fix fits one worktree</li>
+            </ul></div>
+            <div class="block dontuse"><div class="lbl">Don't use when</div><ul>
+              <li>Multiple acceptance criteria → <code>/stx-feature</code></li>
+              <li>Spans multiple tiers → <code>/stx-feature</code></li>
+              <li>You don't have a repro yet</li>
+            </ul></div>
+          </div>
+
+          <h4>Required interview fields</h4>
+          <table class="deftbl">
+            <thead><tr><th>Field</th><th>Type</th><th>Default</th></tr></thead>
+            <tbody>
+              <tr><td class="k">title</td><td class="t">text</td><td>—</td></tr>
+              <tr><td class="k">issues</td><td class="t">numbered list</td><td>—</td></tr>
+              <tr><td class="k">repro</td><td class="t">text</td><td>—</td></tr>
+              <tr><td class="k">expected</td><td class="t">numbered list</td><td>mirrors issues 1:1</td></tr>
+              <tr><td class="k">test_kind</td><td class="t">radio</td><td>playwright (UI) / vitest-unit (logic)</td></tr>
+              <tr><td class="k">iteration_cap</td><td class="t">number</td><td>5</td></tr>
+              <tr><td class="k">commit_policy</td><td class="t">radio</td><td>commit-after-green</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Invocations</h4>
+          <pre><span class="c"># Interactive</span>
+/stx-fix
+
+<span class="c"># Pre-supply title</span>
+/stx-fix Timer offset wrong after DST</pre>
+
+          <h4>Halt conditions</h4>
+          <ul>
+            <li>Coder edits a test file</li>
+            <li>Coder weakens or skips an assertion</li>
+            <li>Iteration cap trips (default 5)</li>
+            <li>Lint/build fails for an unrelated reason</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-checkin">
+        <summary>
+          <span class="ico">C</span>
+          <span class="nm">/stx-checkin<span class="one">Commit + push with security scan. Blocks secrets, warns on noise, offers PR on feature branches.</span></span>
+          <span class="type type-any">any-bound</span>
+          <span class="ver">v1.0</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>A guarded git commit workflow. Scans for secrets, warns on noise, stages, commits with Claude co-authorship, pushes, optionally opens a PR.</p>
+
+          <div class="blocks">
+            <div class="block use"><div class="lbl">Use when</div><ul>
+              <li>Quick commit + push with security guards on</li>
+              <li>Unsure if there's a secret in the staging area</li>
+              <li>Want PR auto-offered on feature branches</li>
+            </ul></div>
+            <div class="block dontuse"><div class="lbl">Don't use when</div><ul>
+              <li>You want the full merge chain → <code>/stx-pr-merge</code></li>
+              <li>Just need <code>git push</code> after a manual commit</li>
+            </ul></div>
+          </div>
+
+          <h4>Invocations</h4>
+          <pre><span class="c"># Interactive</span>
+/stx-checkin
+
+<span class="c"># With message</span>
+/stx-checkin <span class="o">-m</span> <span class="s">"feat: add login"</span>
+
+<span class="c"># Preview</span>
+/stx-checkin <span class="o">--dry-run</span>
+
+<span class="c"># Commit only</span>
+/stx-checkin <span class="o">--skip-push</span></pre>
+
+          <h4>Security scan</h4>
+          <table class="deftbl">
+            <thead><tr><th>Pattern</th><th>Action</th></tr></thead>
+            <tbody>
+              <tr><td class="k">.env, .env.*</td><td><span class="type" style="background:#f7e3df;color:#b13d2c;">BLOCKED</span> secrets</td></tr>
+              <tr><td class="k">*.pem, *.key, id_rsa</td><td><span class="type" style="background:#f7e3df;color:#b13d2c;">BLOCKED</span> private keys</td></tr>
+              <tr><td class="k">credentials.json, *adminsdk*.json</td><td><span class="type" style="background:#f7e3df;color:#b13d2c;">BLOCKED</span> service creds</td></tr>
+              <tr><td class="k">.DS_Store, *.log, node_modules/</td><td><span class="type type-any">WARNED</span> can proceed</td></tr>
+              <tr><td class="k">files &gt; 10 MB</td><td><span class="type" style="background:#fcf2dc;color:#b8893a;">FLAGGED</span> suggest Git LFS</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-pr-merge">
+        <summary>
+          <span class="ico">M</span>
+          <span class="nm">/stx-pr-merge<span class="one">Full chain: commit → push → PR → build → squash-merge → refresh main → build → cleanup. Halts on any failure.</span></span>
+          <span class="type type-wt">worktree-bound</span>
+          <span class="ver">v1.0</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>The complete close-out for a feature worktree. Two build gates around the merge. Designed to be approved as one chain rather than step-by-step.</p>
+
+          <div class="blocks">
+            <div class="block use"><div class="lbl">Use when</div><ul>
+              <li>Feature branch finished, want one chain to merge &amp; clean up</li>
+              <li>You want hard build-validation around the merge</li>
+            </ul></div>
+            <div class="block dontuse"><div class="lbl">Don't use when</div><ul>
+              <li>Only commit + push needed → <code>/stx-checkin</code></li>
+              <li>You're on main (skill is worktree-bound)</li>
+            </ul></div>
+          </div>
+
+          <h4>The chain</h4>
+          <table class="deftbl">
+            <thead><tr><th>#</th><th>Step</th><th>Halts if</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Pre-flight (status, branch, remote)</td><td>On main; dirty unrelated; no remote</td></tr>
+              <tr><td>2</td><td>Stage explicit files</td><td>Files don't match described</td></tr>
+              <tr><td>3</td><td>Commit (Conventional + co-author)</td><td>Empty message</td></tr>
+              <tr><td>4</td><td><code>git push -u</code></td><td>Rejected / protected / auth</td></tr>
+              <tr><td>5</td><td><code>gh pr create</code></td><td>gh unavailable</td></tr>
+              <tr><td>6</td><td>Build #1 (feature worktree)</td><td>Non-zero exit</td></tr>
+              <tr><td>7</td><td><code>gh pr merge --squash</code></td><td>Conflicts / checks</td></tr>
+              <tr><td>8</td><td>Refresh main <code>--ff-only</code></td><td>Non-fast-forward</td></tr>
+              <tr><td>9</td><td>Build #2 (main, post-merge)</td><td>Non-zero exit</td></tr>
+              <tr><td>10</td><td>Remove worktree + branch</td><td>Cleanup failure</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Single chained approval</h4>
+          <p>One sentence covers every named step: "Commit these, push, open a PR, squash-merge, refresh main, clean up the worktree." Failures still halt; unexpected files still need a fresh approval.</p>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-report">
+        <summary>
+          <span class="ico">R</span>
+          <span class="nm">/stx-report<span class="one">Single-file HTML report of worktree changes. Exec summary, approach table, Mermaid diagrams, per-file diffs, test results.</span></span>
+          <span class="type type-wt">worktree-bound</span>
+          <span class="ver">v1.0</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>Self-contained <code>*.html</code> under <code>docs/</code> documenting a worktree's changes. Same shape every time: stats, status pills, approach trade-off table, two Mermaid diagrams, per-file diffs, test output, deferred caveats.</p>
+
+          <div class="blocks">
+            <div class="block use"><div class="lbl">Use when</div><ul>
+              <li>Worktree finished, want a shareable artifact</li>
+              <li>Capture <em>why</em>, not just <em>what</em></li>
+              <li>Preserve audit trail before discarding a halted worktree</li>
+            </ul></div>
+            <div class="block dontuse"><div class="lbl">Don't use when</div><ul>
+              <li>One-line fix — <code>git log</code> is enough</li>
+              <li>Diff incomplete (re-run when done)</li>
+            </ul></div>
+          </div>
+
+          <h4>Invocations</h4>
+          <pre><span class="c"># Infer from cwd</span>
+/stx-report
+
+<span class="c"># Explicit worktree</span>
+/stx-report <span class="o">--worktree</span> .claude/worktrees/wave-admin-multi-delete
+
+<span class="c"># Override defaults</span>
+/stx-report <span class="o">--base</span> develop <span class="o">--title</span> <span class="s">"Replacing the PNG download"</span></pre>
+
+          <h4>Sections (always the same shape)</h4>
+          <ol>
+            <li>Executive summary (2–4 sentences)</li>
+            <li>Stat cards (files, ± lines, deps, test status)</li>
+            <li>Status pills (build / lint / tests / commit)</li>
+            <li>Approach table with rejected options + reasons</li>
+            <li>Key insight callout (optional)</li>
+            <li>Two Mermaid diagrams (flowchart + sequence)</li>
+            <li>Files table + per-file detail with informative hunks</li>
+            <li>Test results (trimmed runner output)</li>
+            <li>Deferred caveats</li>
+            <li>Out of scope</li>
+          </ol>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-image">
+        <summary>
+          <span class="ico">I</span>
+          <span class="nm">/stx-image<span class="one">Audit project images for AI-context-safe sizing. Reports unused &amp; oversized; optional resize via macOS sips.</span></span>
+          <span class="type type-any">any-bound</span>
+          <span class="ver">v1.0</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>Scans for images, reports which are unreferenced and which exceed Claude Vision's 1568 px / 500 KB thresholds. Default mode makes no changes.</p>
+
+          <div class="blocks">
+            <div class="block use"><div class="lbl">Use when</div><ul>
+              <li>Images bloating context</li>
+              <li>Want a defensible report before cleanup</li>
+              <li>Want to know which assets are unreferenced</li>
+            </ul></div>
+            <div class="block dontuse"><div class="lbl">Don't use when</div><ul>
+              <li>Not on macOS and don't need analysis (raster dims need sips)</li>
+              <li>Images loaded by constructed strings (false positives in "unused")</li>
+            </ul></div>
+          </div>
+
+          <h4>Thresholds</h4>
+          <table class="deftbl">
+            <thead><tr><th>Threshold</th><th>Default</th><th>Why</th></tr></thead>
+            <tbody>
+              <tr><td>File size</td><td class="k">500 KB</td><td>Claude Vision resizes large images; bytes beyond this are wasted</td></tr>
+              <tr><td>Longest edge</td><td class="k">1568 px</td><td>Matches Claude's internal pre-processing cap</td></tr>
+              <tr><td>Logo/icon target</td><td class="k">512 px</td><td>Always rendered small</td></tr>
+              <tr><td>SVG flagged at</td><td class="k">100 KB</td><td>Usually embedded rasters — recommend SVGO</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Invocations</h4>
+          <pre><span class="c"># Analyze only</span>
+/stx-image
+
+<span class="c"># Subfolder</span>
+/stx-image <span class="o">--folder</span> public
+
+<span class="c"># Apply (in place via sips)</span>
+/stx-image <span class="o">--folder</span> public <span class="o">--apply</span>
+
+<span class="c"># Also delete unused</span>
+/stx-image <span class="o">--apply --delete-unused</span></pre>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-help">
+        <summary>
+          <span class="ico">H</span>
+          <span class="nm">/stx-help<span class="one">Terse text-mode help. Lists every skill grouped by type with one-liners. Ends with a pointer to /stx-help-html.</span></span>
+          <span class="type type-any">any-bound</span>
+          <span class="ver">v1.0</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>Quick reference, in-terminal. Prints every skill name with a one-liner, grouped by type. Use this when you don't want to leave the terminal.</p>
+
+          <h4>Invocation</h4>
+          <pre>/stx-help</pre>
+
+          <p>No options. Output ends with a one-line pointer to <code>/stx-help-html</code> for the visual walkthrough.</p>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-help-html">
+        <summary>
+          <span class="ico">D</span>
+          <span class="nm">/stx-help-html<span class="one">Open this walkthrough doc in your default browser. Visual: diagrams, expandable catalog, examples.</span></span>
+          <span class="type type-any">any-bound</span>
+          <span class="ver">v1.0</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>Thin shell-out. Runs <code>open .claude/skills/stx-help-html/help.html</code>. The HTML you're reading right now is that file — shipped with the skill, refreshed on every installer run.</p>
+
+          <h4>Invocation</h4>
+          <pre>/stx-help-html</pre>
+
+          <h4>Location</h4>
+          <p><code>&lt;project&gt;/.claude/skills/stx-help-html/help.html</code></p>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-skill-settings">
+        <summary>
+          <span class="ico">S</span>
+          <span class="nm">/stx-skill-settings<span class="one">View / edit project skill settings. Real CLI binary that bypasses the LLM.</span></span>
+          <span class="type type-planned">planned</span>
+          <span class="ver">v1.6</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>Project-local CLI plus a thin slash-command wrapper. Reads and writes <code>.claude/stx-skill-settings.json</code>. Bypasses the LLM by shipping as a real Node.js binary.</p>
+
+          <div class="callout callout-gold"><strong>Status: planned (PR-B).</strong> The settings file is read by skills already; the CLI to manage it is the next piece of work.</div>
+
+          <h4>Invocations (planned)</h4>
+          <pre><span class="c"># Bypass LLM entirely</span>
+! .claude/skills/stx-skill-settings/stx-skill-settings.js
+! .claude/skills/stx-skill-settings/stx-skill-settings.js <span class="o">--edit</span>
+! .claude/skills/stx-skill-settings/stx-skill-settings.js <span class="o">--set</span> story-style-code=true
+! .claude/skills/stx-skill-settings/stx-skill-settings.js <span class="o">--reset</span>
+
+<span class="c"># Slash form (LLM in the loop, but trivially)</span>
+/stx-skill-settings</pre>
+        </div>
+      </details>
+    </section>
+
+    <!-- ════════════════ §6 — SETTINGS ════════════════ -->
+    <section id="settings">
+      <div class="sect-head">
+        <span class="sect-n">06</span>
+        <span class="sect-name">Settings</span>
+      </div>
+      <div class="sect-tag">One file, checked in by default.</div>
+
+      <div class="callout callout-gold">
+        <strong>Settings is checked in by default.</strong> Lives at <code>.claude/stx-skill-settings.json</code>. Installer does not gitignore it. Project-bound, team-shared if committed — <strong>NOT personalized per-user yet</strong> (see pending #1).
+      </div>
+
+      <h4>Shape</h4>
+      <pre>{
+  <span class="s">"story-style-code"</span>: <span class="k">false</span>,
+  <span class="s">"stx-feature.default-soft-cap"</span>: <span class="k">3</span>,
+  <span class="s">"stx-feature.default-hard-cap"</span>: <span class="k">5</span>,
+  <span class="s">"stx-feature.default-suspicious-ceiling"</span>: <span class="k">3</span>,
+  <span class="s">"stx-feature.default-max-parallel-devs"</span>: <span class="k">3</span>,
+  <span class="s">"stx-feature.default-commit-policy"</span>: <span class="s">"commit-after-green"</span>,
+  <span class="s">"stx-fix.default-max-iter"</span>: <span class="k">5</span>,
+  <span class="s">"stx-pr-merge.auto-clean"</span>: <span class="k">true</span>
+}</pre>
+
+      <h4>Keys</h4>
+      <table class="deftbl">
+        <thead><tr><th>Key</th><th>Type</th><th>Default</th><th>Affects</th></tr></thead>
+        <tbody>
+          <tr><td class="k">story-style-code</td><td class="t">bool</td><td class="k">false</td><td>When true, Dev prompts include the story-style code block. When false, lives only in <code>~/.claude/CLAUDE.md</code>.</td></tr>
+          <tr><td class="k">stx-feature.default-soft-cap</td><td class="t">int</td><td class="k">3</td><td>Iterations per task before Architect re-engages.</td></tr>
+          <tr><td class="k">stx-feature.default-hard-cap</td><td class="t">int</td><td class="k">5</td><td>Absolute ceiling per task; wave halts and writes handoff.md.</td></tr>
+          <tr><td class="k">stx-feature.default-suspicious-ceiling</td><td class="t">int</td><td class="k">3</td><td>Suspicious events per task before auto-halt.</td></tr>
+          <tr><td class="k">stx-feature.default-max-parallel-devs</td><td class="t">int</td><td class="k">3</td><td>Max concurrent Dev agents. 1 = sequential.</td></tr>
+          <tr><td class="k">stx-feature.default-commit-policy</td><td class="t">enum</td><td class="k">"commit-after-green"</td><td>One of <code>no-commit</code> / <code>commit-after-green</code> / <code>commit-and-pr</code>.</td></tr>
+          <tr><td class="k">stx-fix.default-max-iter</td><td class="t">int</td><td class="k">5</td><td>QA → Coder iteration cap.</td></tr>
+          <tr><td class="k">stx-pr-merge.auto-clean</td><td class="t">bool</td><td class="k">true</td><td>When true, <code>/stx-pr-merge</code> removes the worktree and deletes the local branch after a successful merge. Set <code>false</code> to keep the worktree around for post-merge inspection.</td></tr>
+        </tbody>
+      </table>
+
+      <h4>Setting spotlight · <code>auto-clean</code></h4>
+      <p class="step-note setting" style="max-width:none">
+        <svg class="gear-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <code>stx-pr-merge.auto-clean</code> — default <strong>true</strong>. Change in <code>.claude/stx-skill-settings.json</code> to keep the worktree around after merge.
+      </p>
+
+      <div class="callout">
+        <strong>Settings pre-fill, they don't bypass.</strong> Skills still run their interview — settings change the default answer, not whether the question fires.
+      </div>
+
+      <h4>Worktrees see a snapshot</h4>
+      <p>The settings file is <strong>copied</strong> into the worktree at creation (not symlinked). Edits to main's file don't propagate to a worktree already in flight — intentional, the wave runs with the settings it was started with.</p>
+    </section>
+
+    <!-- ════════════════ §7 — PENDING ════════════════ -->
+    <section id="pending">
+      <div class="sect-head">
+        <span class="sect-n">07</span>
+        <span class="sect-name">Pending features</span>
+      </div>
+      <div class="sect-tag">Designed during scenario walkthroughs, not yet shipped.</div>
+
+      <div class="pending">
+        <div class="row">
+          <div class="num">1</div>
+          <div class="body">
+            <h4>Per-user settings layer</h4>
+            <p><code>~/.claude/stx-skill-settings.json</code> overrides project values for the current user. Today everyone shares one file.</p>
+          </div>
+          <div><span class="pill planned">planned</span></div>
+        </div>
+
+        <div class="row">
+          <div class="num">2</div>
+          <div class="body">
+            <h4>Default-branch detection</h4>
+            <p>Today "on main?" assumes <code>main</code>. Real repos use <code>master</code>, <code>develop</code>, configured names. Need exact-match list + ask-on-ambiguous.</p>
+          </div>
+          <div><span class="pill research">research</span></div>
+        </div>
+
+        <div class="row">
+          <div class="num">3</div>
+          <div class="body">
+            <h4>Stale-CLI version detection</h4>
+            <p>CLI binaries ship with skills. Worktrees branched before a CLI update keep the old version. Ship random version-id; warn on mismatch.</p>
+          </div>
+          <div><span class="pill research">research</span></div>
+        </div>
+
+        <div class="row">
+          <div class="num">4</div>
+          <div class="body">
+            <h4>Halt-path auto-commits artifacts before discard</h4>
+            <p>When a wave halts and the worktree is later removed, artifacts are lost unless committed. Auto-commit at halt time so the branch preserves them.</p>
+          </div>
+          <div><span class="pill planned">planned</span></div>
+        </div>
+
+        <div class="row">
+          <div class="num">5</div>
+          <div class="body">
+            <h4>Type-aware installer</h4>
+            <p>Installer should refuse to run inside a worktree. Detect via <code>git rev-parse --git-dir</code> ≠ <code>--git-common-dir</code>.</p>
+          </div>
+          <div><span class="pill planned">planned</span></div>
+        </div>
+
+        <div class="row">
+          <div class="num">6</div>
+          <div class="body">
+            <h4><code>type:</code> frontmatter enforcement</h4>
+            <p>Every SKILL.md gains a <code>type: main | worktree | any</code> field, checked at invocation. <code>--allow-anywhere</code> override flag for the rare deliberate case.</p>
+          </div>
+          <div><span class="pill planned">planned</span></div>
+        </div>
+
+        <div class="row">
+          <div class="num">7</div>
+          <div class="body">
+            <h4>Resume for <code>/stx-feature</code></h4>
+            <p><code>/stx-feature --resume &lt;wave-id&gt;</code> reads <code>wave-state.json</code> and picks up from saved status. Halts cleanly if the worktree's gone.</p>
+          </div>
+          <div><span class="pill planned">planned</span></div>
+        </div>
+
+        <div class="row">
+          <div class="num">8</div>
+          <div class="body">
+            <h4>Settings CLI (<code>/stx-skill-settings</code>)</h4>
+            <p>Real CLI that bypasses the LLM. View / edit / set / reset against the project settings file. Header reminder that settings are checked in.</p>
+          </div>
+          <div><span class="pill planned">planned</span></div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</article>
+
+<footer class="colophon">
+  <div class="wrap">
+    <strong>STX Skills v1.6</strong> · Walkthrough &amp; Reference ·
+    open with <code>/stx-help-html</code> · text-mode with <code>/stx-help</code>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ───────────────────── Walkthrough view toggle (Feature | Fix) ─────────────────────
+  var toggleBtns = document.querySelectorAll('.view-toggle .vt-btn');
+  var views = document.querySelectorAll('.walkthrough-view');
+
+  function switchView(viewName) {
+    toggleBtns.forEach(function (b) {
+      var isActive = b.dataset.view === viewName;
+      b.classList.toggle('active', isActive);
+      b.setAttribute('aria-selected', isActive ? 'true' : 'false');
+    });
+    views.forEach(function (v) {
+      v.hidden = !v.classList.contains('view-' + viewName);
+    });
+    // Reset to step 1 of the new view (its first panel is .active in markup, but
+    // re-applying ensures the SVG box highlight is in sync).
+    selectStep('1');
+  }
+
+  toggleBtns.forEach(function (btn) {
+    btn.addEventListener('click', function () { switchView(btn.dataset.view); });
+  });
+
+  // ───────────────────── Step click-to-reveal (scoped to active view) ─────────────────────
+  // Clicking a diagram box toggles the matching detail panel and highlights
+  // the box — without changing the URL hash or scrolling the page. Selection
+  // is scoped to whichever walkthrough view is currently visible.
+  function activeView() {
+    return document.querySelector('.walkthrough-view:not([hidden])');
+  }
+
+  function selectStep(num) {
+    var view = activeView();
+    if (!view) return;
+    view.querySelectorAll('.step-detail').forEach(function (p) { p.classList.remove('active'); });
+    view.querySelectorAll('svg a[data-step]').forEach(function (a) { a.classList.remove('selected'); });
+    var panel = view.querySelector('.step-detail[data-step="' + num + '"]');
+    var link  = view.querySelector('svg a[data-step="' + num + '"]');
+    if (panel) panel.classList.add('active');
+    if (link)  link.classList.add('selected');
+  }
+
+  // Delegate clicks via document so newly-rendered views work too
+  document.querySelectorAll('.walkthrough-view svg a[data-step]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      e.preventDefault();
+      selectStep(a.dataset.step);
+    });
+  });
+
+  // Initial selection: step 1 of the default (Feature) view
+  selectStep('1');
+
+  // ───────────────────── Current-section indicator ─────────────────────
+  // Highlights the matching number in the persistent masthead's mini-nav
+  // as the user scrolls between sections. The "active zone" is a narrow
+  // band ~25% from the top of the viewport so the indicator changes at
+  // the moment a new section's heading reaches a natural reading position.
+  var sections = document.querySelectorAll('article section[id]');
+  var navLinks = document.querySelectorAll('.pm-nav a');
+  if (sections.length && navLinks.length && 'IntersectionObserver' in window) {
+    var sectionObs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          var id = entry.target.id;
+          navLinks.forEach(function (a) {
+            a.classList.toggle('current', a.getAttribute('href') === '#' + id);
+          });
+        }
+      });
+    }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
+    sections.forEach(function (s) { sectionObs.observe(s); });
+  }
+})();
+</script>
+
+</body>
+</html>
