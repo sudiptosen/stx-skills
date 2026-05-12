@@ -1,16 +1,21 @@
 # stx-skills
 
-Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection. Install into any project without publishing to npm.
+Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection — eight slash-commands that drive feature waves, bug fixes, commits, PR merges, and documentation, all built around the worktree model. Install into any project without publishing to npm.
 
-## Install (no registry needed)
+📖 **[Open the walkthrough →](https://sudiptosen.github.io/stx-skills/)** *(once GitHub Pages is enabled — see [GitHub Pages](#github-pages) below)*
+
+Current release: **v1.6.0** · MIT licensed.
+
+---
+
+## Quick install
 
 ```bash
-# From the GitHub repo (recommended — no clone needed)
+# From the GitHub repo — no clone needed
 cd ~/projects/my-app
 npx github:sudiptosen/stx-skills
 
 # From a local sibling clone
-cd ~/projects/my-app
 npx ../stx-skills
 
 # From an absolute path
@@ -20,194 +25,218 @@ npx /Users/me/projects/stx-skills
 npx ../stx-skills ~/projects/my-app
 ```
 
-> ⚠️ **Syntax note.** The package path goes **right after `npx`**. Do not prefix it with `install` — `npx install ../stx-skills` fails with `could not determine executable to run` because npx treats `install` as the package name. (`npm install` is different; that's the `npm` CLI, not `npx`.) The word `install` is accepted only **after** the package spec: `npx ../stx-skills install` works as a no-op verb.
+> ⚠️ **Syntax note.** The package path goes right after `npx`. Do not prefix it with `install` — `npx install ../stx-skills` fails with `could not determine executable to run` because npx treats `install` as the package name. (`npm install` is different; that's the `npm` CLI.) The word `install` is accepted only *after* the package spec: `npx ../stx-skills install` works as a no-op verb.
 
-How this works without a registry: `npx` accepts a local path or a `github:user/repo` spec, installs the package into a temporary cache, and runs the default bin (the one that matches the package name — `stx-skills`). The `prepare` script builds the TypeScript to `dist/` during install, so the bin is always up to date.
+Re-running the installer **refreshes** — existing skill directories are wiped and replaced with the latest, so one command covers first install and updates.
 
-Re-running the install **refreshes** — existing skill directories in the target are wiped and replaced with the latest, so it's the one command for both first-time install and updates.
-
-### Options
+### Installer options
 
 ```bash
-npx ../stx-skills --link                  # symlink for live updates (dev mode)
-npx ../stx-skills --skill image-resize    # install only one skill
-npx ../stx-skills --list                  # show what's available
-npx ../stx-skills --force                 # overwrite existing installs
+npx ../stx-skills --link                    # symlink for live updates (dev mode)
+npx ../stx-skills --skill stx-feature       # install only one skill
+npx ../stx-skills --list                    # show what's available
+npx ../stx-skills --force                   # overwrite existing installs
 npx ../stx-skills --help
 ```
 
-### Alternative installers
+---
+
+## Skill catalog
+
+Every skill is one of three types based on where you run it:
+
+| Type | Meaning | Skills |
+|---|---|---|
+| **main-bound** | You're on `main` and want to start something (skill spawns a worktree) | `/stx-feature`, `/stx-fix` |
+| **worktree-bound** | You're in a feature worktree (skill operates on it) | `/stx-pr-merge`, `/stx-report` |
+| **any-bound** | Runs anywhere — utilities | `/stx-checkin`, `/stx-image`, `/stx-help`, `/stx-help-html` |
+
+### `/stx-feature` — multi-agent feature wave  *(main-bound)*
+
+Interview → Analyst → Architect → QA → tier-specialized Dev agents. Three approval gates, suspicious-change tracking, iteration caps. Produces `requirement-verse.html`, `architecture-verse.html`, `qa-verse.html`, `result.html` under `docs/waves/<wave-id>/`.
 
 ```bash
-# Shell installer (same outcome, no Node needed)
-./scripts/install.sh /path/to/target/project
-
-# Manual symlink for contributors who want to edit skills live
-ln -s /abs/path/stx-skills/.claude/skills/git-checkin \
-      /path/to/project/.claude/skills/git-checkin
+/stx-feature                                              # Fully interactive
+/stx-feature Admin multi-delete on /dashboard             # Seed the request
+/stx-feature --resume wave-admin-multi-delete-7f3a        # (planned)
 ```
 
-## Available skills
+See [.claude/skills/stx-feature/SKILL.md](.claude/skills/stx-feature/SKILL.md).
 
-### `/git-checkin`
+### `/stx-fix` — two-agent bug-fix loop  *(main-bound)*
 
-Secure git workflow with pre-commit security scanning.
+Drives a QA → Coder loop against a reproducible bug. QA writes the failing test first; the Coder makes the smallest change to pass. Coder cannot touch test files — that halts the loop. Iteration cap default 5.
 
 ```bash
-/git-checkin                       # Interactive mode
-/git-checkin -m "feat: add login"  # With commit message
-/git-checkin --dry-run             # Preview only
-/git-checkin --skip-push           # Commit without push
+/stx-fix                                       # Interactive
+/stx-fix Timer offset wrong after DST          # Pre-supply the title
 ```
 
-- Blocks secrets (`.env`, `*.pem`, `credentials.json`, …)
-- Warns on `.DS_Store`, `node_modules/`, large files (>10 MB)
-- Branch-aware: prompts before pushing to main, offers PR on feature branches
-- Adds `Co-Authored-By: Claude` line
+See [.claude/skills/stx-fix/SKILL.md](.claude/skills/stx-fix/SKILL.md).
 
-See [.claude/skills/git-checkin/SKILL.md](.claude/skills/git-checkin/SKILL.md).
+### `/stx-checkin` — secure commit + push  *(any-bound)*
 
-### `/git-pr-merge`
-
-End-to-end feature-branch shipping workflow with build-validation gates around the merge.
+Pre-commit security scan, deleted-file confirmation, branch-aware push/PR. Blocks secrets (`.env`, `*.pem`, `credentials.json`, …) and warns on noise (`.DS_Store`, `node_modules/`, files >10 MB).
 
 ```bash
-/git-pr-merge                                  # Run with chained approval
-/git-pr-merge --interactive                    # Prompt at each gate
-/git-pr-merge --dry-run                        # Print every command without executing
-/git-pr-merge --pr-title "fix: timer offset"   # Pre-supply the PR title
-/git-pr-merge --build-cmd "pnpm build"         # Override build command
+/stx-checkin                       # Interactive
+/stx-checkin -m "feat: add login"  # With commit message
+/stx-checkin --dry-run             # Preview only
+/stx-checkin --skip-push           # Commit without push
 ```
 
-- Chain: pre-flight → commit → push & PR → build #1 → squash-merge → refresh main → build #2 → worktree cleanup → branch delete
-- Two build-validation gates (pre-merge in feature worktree, post-merge in main worktree)
-- Halts on any failure — never silently retries or skips
-- Falls back to `gh api -X DELETE …git/refs/heads/<branch>` when local-checkout blocks branch deletion
-- Designed to honour the user's "Multi-Step Workflow Approvals" governance rule
+See [.claude/skills/stx-checkin/SKILL.md](.claude/skills/stx-checkin/SKILL.md).
 
-See [.claude/skills/git-pr-merge/SKILL.md](.claude/skills/git-pr-merge/SKILL.md).
+### `/stx-pr-merge` — commit → PR → merge → cleanup chain  *(worktree-bound)*
 
-### `/image-resize`
-
-AI-context-safe image analysis. Reports unused and oversized images with target sizes and a "why" for each target, then optionally resizes in-place with `sips` or removes unused files.
+Ten-step chain with build-validation gates around the merge. Halts on any failure for user review. Falls back to `gh api -X DELETE …git/refs/heads/<branch>` when local-checkout blocks branch deletion.
 
 ```bash
-/image-resize                              # Analyze cwd (no changes)
-/image-resize public/                      # Analyze a subdirectory
-/image-resize --apply                      # Resize oversized images
-/image-resize --apply --delete-unused      # Also remove unreferenced images
-/image-resize --size-kb 300                # Tighten file-size threshold
-/image-resize --max-dimension 1280         # Tighten longest-edge threshold
-/image-resize --json                       # Machine-readable output
+/stx-pr-merge                                    # Run with chained approval
+/stx-pr-merge --interactive                      # Prompt at each gate
+/stx-pr-merge --dry-run                          # Print every command without executing
+/stx-pr-merge --pr-title "fix: timer offset"     # Pre-supply the PR title
 ```
 
-- Default mode makes zero file changes
-- Three-section report: Unused / Oversized / Fine as-is
-- Reference detection scans ts/tsx/js/jsx/html/css/vue/svelte/md/json/…
-- Thresholds default to 500 KB and 1568 px (Claude Vision's internal cap)
-- Logos / icons target 512 px
+Pre-flight → commit → push & PR → **build #1** → squash-merge → refresh main → **build #2** → worktree cleanup → branch delete.
 
-See [.claude/skills/image-resize/SKILL.md](.claude/skills/image-resize/SKILL.md).
+See [.claude/skills/stx-pr-merge/SKILL.md](.claude/skills/stx-pr-merge/SKILL.md).
 
-### `/gen-worktree-report`
+### `/stx-report` — single-file worktree HTML report  *(worktree-bound)*
 
-Generates a polished single-file HTML report explaining the work done in a git worktree (or feature branch). Embedded template renders an executive summary, approach trade-off table, Mermaid architecture diagrams, file-by-file diffs, test results, and deferred caveats — same shape every time.
+Produces a polished `*.html` under `docs/` documenting a worktree's changes. Same shape every time: stats, status pills, approach trade-off table, two Mermaid diagrams, per-file diffs with informative hunks, test output, deferred caveats.
 
 ```bash
-/gen-worktree-report                                # cwd, infer everything
-/gen-worktree-report --worktree ../feature-branch   # explicit path
-/gen-worktree-report --base develop                 # diff base (default: main)
-/gen-worktree-report --output docs/my-report.html   # explicit output file
-/gen-worktree-report --title "PNG → PDF migration"  # override title
+/stx-report                                          # cwd, infer everything
+/stx-report --worktree ../feature-branch             # explicit path
+/stx-report --base develop                           # diff base (default: main)
+/stx-report --title "PNG → PDF migration"            # override title
 ```
 
-The CLI helper also runs standalone — `gen-worktree-report --pretty` prints worktree context (branch, base, diff stat, recent commits) without writing HTML.
+See [.claude/skills/stx-report/SKILL.md](.claude/skills/stx-report/SKILL.md).
 
-- Output goes under `docs/` by default (`docs/<branch-name>-report.html`)
-- Mermaid loaded via CDN — single file, no build step
-- Diffs rendered with gutter + add/remove colours, not generic code fences
-- Never commits — leaves the file uncommitted for review
+### `/stx-image` — AI-context-safe image audit  *(any-bound)*
 
-See [.claude/skills/gen-worktree-report/SKILL.md](.claude/skills/gen-worktree-report/SKILL.md).
+Reports unused and oversized images with a "why" for each target, then optionally resizes via macOS `sips` or removes unused. Default mode makes zero changes.
 
-### `/fix-issue`
-
-Drives a two-agent QA → Coder loop against a known bug (or small cluster of related bugs). The skill interviews the user to fill the prompt template, confirms the worktree state, presents the rendered prompt for explicit acceptance, then kicks off the loop.
-
-```
-/fix-issue                         # Interactive — interviews the user
-/fix-issue "Fix Pro Monthly card"  # Pre-supply the title; the rest is interactive
+```bash
+/stx-image                                  # Analyze cwd
+/stx-image public/                          # Analyze a subdirectory
+/stx-image --apply                          # Resize oversized in-place
+/stx-image --apply --delete-unused          # Also remove unreferenced
+/stx-image --size-kb 300 --max-dimension 1280   # Tighter thresholds
 ```
 
-- Worktree-first: confirms a non-main worktree exists (or proposes one) before any test or code edit
-- Failing-test-first: QA writes the test and confirms it fails for the right reason before the Coder starts
-- Hard separation: Coder cannot touch test files (halt-the-loop offense)
-- Iteration caps: 3 cycles on the same surface symptom, 5 total cycles (configurable)
-- Acceptance gate: rendered prompt is shown to the user for review before any agent runs
-- Conversational only — no CLI binary; the skill's logic lives entirely in `SKILL.md`
+Thresholds default to 500 KB and 1568 px (Claude Vision's internal cap); logos/icons target 512 px.
 
-See [.claude/skills/fix-issue/SKILL.md](.claude/skills/fix-issue/SKILL.md).
+See [.claude/skills/stx-image/SKILL.md](.claude/skills/stx-image/SKILL.md).
+
+### `/stx-help` — terse text-mode reference  *(any-bound)*
+
+Prints every skill grouped by type with one-line descriptions. Ends with a pointer to `/stx-help-html` for the visual walkthrough.
+
+```bash
+/stx-help
+```
+
+See [.claude/skills/stx-help/SKILL.md](.claude/skills/stx-help/SKILL.md).
+
+### `/stx-help-html` — editorial walkthrough  *(any-bound)*
+
+Opens [`help.html`](.claude/skills/stx-help-html/help.html) — the full walkthrough doc with diagrams, expandable skill catalog, settings reference, and pending-features backlog. Same content drives the GitHub Pages site (see below).
+
+```bash
+/stx-help-html
+```
+
+See [.claude/skills/stx-help-html/SKILL.md](.claude/skills/stx-help-html/SKILL.md).
+
+---
+
+## GitHub Pages
+
+The walkthrough doc is also published as a GitHub Pages site so anyone can browse it without installing the package. The Pages content is `docs/index.html`, a synced copy of `.claude/skills/stx-help-html/help.html`.
+
+**To enable Pages on this repo (one-time, after merge):**
+
+1. Go to repo **Settings** → **Pages**
+2. Source: **Deploy from a branch**
+3. Branch: **`main`**, folder: **`/docs`**
+4. Save
+
+The site goes live at `https://sudiptosen.github.io/stx-skills/`.
+
+**Keeping docs in sync:** the canonical source is `.claude/skills/stx-help-html/help.html` (it ships with the skill). `npm run build` also runs `prepare-docs`, which copies it to `docs/index.html`. Edit only the canonical; the build pushes it to `docs/`.
+
+```bash
+npm run build           # tsc + copy to docs/index.html
+npm run prepare-docs    # just the copy step
+```
+
+---
 
 ## Development
 
 ```bash
 npm install
-npm run build       # compile TypeScript to dist/
-npm run watch       # recompile on change
+npm run build       # compile TypeScript + sync docs/index.html
+npm run watch       # recompile TS on change
+npm run clean       # remove dist/
 
 # Smoke test skills
-node dist/skills/git-checkin.js --dry-run
-node dist/skills/image-resize.js --help
-node dist/skills/gen-worktree-report.js --pretty
+node dist/skills/stx-checkin.js --dry-run
+node dist/skills/stx-image.js --help
+node dist/skills/stx-report.js --pretty
 node dist/cli/install.js --list
 ```
 
-## Adding a new skill
+### Adding a new skill
 
-1. Add `src/skills/<skill-name>.ts` with a `#!/usr/bin/env node` shebang.
-2. Create `.claude/skills/<skill-name>/SKILL.md` (YAML frontmatter: `name`, `description`, `version`, `author`) and optionally `README.md` with research/design notes.
-3. Register the bin in `package.json`:
+1. Add `src/skills/<skill-name>.ts` with a `#!/usr/bin/env node` shebang (only if the skill has a CLI binary).
+2. Create `.claude/skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`, `version`, `author`) and optionally `README.md` with design notes.
+3. If the skill has a binary, register it in `package.json`:
    ```json
    "bin": { "<skill-name>": "./dist/skills/<skill-name>.js" }
    ```
-4. Document the skill in this README.
-5. `npm run build` to verify it compiles.
+4. Document the skill in this README and add a catalog entry in `.claude/skills/stx-help-html/help.html`.
+5. `npm run build` to verify it compiles and sync the docs.
 
 The installer auto-discovers every directory under `.claude/skills/` — no registration needed there.
+
+---
 
 ## File structure
 
 ```
 stx-skills/
-├── package.json                       # bin: stx-skills, git-checkin, git-pr-merge, image-resize, gen-worktree-report
+├── package.json                              # bin: stx-skills + 4 skill binaries
 ├── tsconfig.json
 ├── src/
 │   ├── cli/
-│   │   └── install.ts                 # `npx ../stx-skills` entry point
+│   │   └── install.ts                        # npx stx-skills entry point
 │   └── skills/
-│       ├── git-checkin.ts
-│       ├── git-pr-merge.ts
-│       ├── image-resize.ts
-│       └── gen-worktree-report.ts
-├── dist/                              # compiled output (npm run build / prepare)
+│       ├── stx-checkin.ts
+│       ├── stx-pr-merge.ts
+│       ├── stx-image.ts
+│       └── stx-report.ts
+├── dist/                                     # gitignored — compiled output
+├── docs/
+│   └── index.html                            # GitHub Pages — synced from help.html
 ├── .claude/
 │   └── skills/
-│       ├── git-checkin/
-│       │   ├── SKILL.md
-│       │   └── README.md
-│       ├── git-pr-merge/
-│       │   ├── SKILL.md
-│       │   └── README.md
-│       ├── image-resize/
-│       │   ├── SKILL.md
-│       │   └── README.md
-│       └── gen-worktree-report/
-│           ├── SKILL.md
-│           ├── README.md
-│           └── template.html          # single-file HTML scaffold with Mermaid via CDN
+│       ├── stx-feature/        (SKILL.md + templates/ + dev-prompts/)
+│       ├── stx-fix/            (SKILL.md + template.md)
+│       ├── stx-checkin/        (SKILL.md + README.md)
+│       ├── stx-pr-merge/       (SKILL.md + README.md)
+│       ├── stx-image/          (SKILL.md + README.md)
+│       ├── stx-report/         (SKILL.md + template.html)
+│       ├── stx-help/           (SKILL.md)
+│       └── stx-help-html/      (SKILL.md + README.md + help.html)  ← canonical doc
 └── scripts/
-    └── install.sh                     # fallback bash installer
+    └── install.sh                            # fallback bash installer
 ```
+
+---
 
 ## License
 

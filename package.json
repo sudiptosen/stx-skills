@@ -11,9 +11,10 @@
     "stx-report": "./dist/skills/stx-report.js"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run prepare-docs",
     "watch": "tsc --watch",
     "clean": "rm -rf dist",
+    "prepare-docs": "mkdir -p docs && cp .claude/skills/stx-help-html/help.html docs/index.html",
     "prepare": "npm run build",
     "prepublishOnly": "npm run build"
   },
