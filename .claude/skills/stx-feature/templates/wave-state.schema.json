@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/sudiptosen/stx-skills/stx-feature/wave-state.schema.json",
+  "$id": "https://github.com/socitix/stx-skills/stx-feature/wave-state.schema.json",
   "title": "wave-state.json",
   "description": "Canonical state for one /stx-feature wave. HTML artifacts are rendered from this file.",
   "type": "object",

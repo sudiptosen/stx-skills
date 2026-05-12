@@ -2,7 +2,7 @@
 
 Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection — eight slash-commands that drive feature waves, bug fixes, commits, PR merges, and documentation, all built around the worktree model. Install into any project without publishing to npm.
 
-📖 **[Open the walkthrough →](https://sudiptosen.github.io/stx-skills/)** *(once GitHub Pages is enabled — see [GitHub Pages](#github-pages) below)*
+📖 **[Open the walkthrough →](https://socitix.github.io/stx-skills/)** — full doc with diagrams, expandable skill catalog, settings reference.
 
 Current release: **v1.6.0** · MIT licensed.
 
@@ -13,7 +13,7 @@ Current release: **v1.6.0** · MIT licensed.
 ```bash
 # From the GitHub repo — no clone needed
 cd ~/projects/my-app
-npx github:sudiptosen/stx-skills
+npx github:socitix/stx-skills
 
 # From a local sibling clone
 npx ../stx-skills
@@ -155,16 +155,9 @@ See [.claude/skills/stx-help-html/SKILL.md](.claude/skills/stx-help-html/SKILL.m
 
 ## GitHub Pages
 
-The walkthrough doc is also published as a GitHub Pages site so anyone can browse it without installing the package. The Pages content is `docs/index.html`, a synced copy of `.claude/skills/stx-help-html/help.html`.
+The walkthrough doc is published as a GitHub Pages site at **[https://socitix.github.io/stx-skills/](https://socitix.github.io/stx-skills/)** — anyone can browse it without installing the package.
 
-**To enable Pages on this repo (one-time, after merge):**
-
-1. Go to repo **Settings** → **Pages**
-2. Source: **Deploy from a branch**
-3. Branch: **`main`**, folder: **`/docs`**
-4. Save
-
-The site goes live at `https://sudiptosen.github.io/stx-skills/`.
+The Pages content is `docs/index.html`, a synced copy of `.claude/skills/stx-help-html/help.html`. Pages source is configured as `main` branch, `/docs` folder.
 
 **Keeping docs in sync:** the canonical source is `.claude/skills/stx-help-html/help.html` (it ships with the skill). `npm run build` also runs `prepare-docs`, which copies it to `docs/index.html`. Edit only the canonical; the build pushes it to `docs/`.
 
