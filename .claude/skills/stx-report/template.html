@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{{TITLE}}</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  :root {
+    --bg: #fafaf9;
+    --panel: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --hairline: #e5e7eb;
+    --hairline-strong: #d1d5db;
+    --teal: #14b8a6;
+    --teal-dark: #0f766e;
+    --amber: #d97706;
+    --amber-soft: #fef3c7;
+    --red: #b91c1c;
+    --green: #047857;
+    --code-bg: #0f172a;
+    --code-text: #e2e8f0;
+    --add: #166534;
+    --add-bg: #dcfce7;
+    --rem: #991b1b;
+    --rem-bg: #fee2e2;
+  }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 56px 28px 96px; }
+  header { border-bottom: 1px solid var(--hairline); padding-bottom: 28px; margin-bottom: 36px; }
+  header .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  header h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 500;
+    font-size: 40px;
+    line-height: 1.15;
+    margin: 8px 0 12px;
+    letter-spacing: -0.01em;
+  }
+  header .meta { color: var(--muted); font-size: 14px; }
+  header .meta code { background: #fff; padding: 2px 6px; border: 1px solid var(--hairline); border-radius: 4px; font-size: 12.5px; }
+  h2 {
+    font-family: Georgia, serif;
+    font-weight: 500;
+    font-size: 26px;
+    margin: 56px 0 14px;
+    letter-spacing: -0.005em;
+  }
+  h2 .num {
+    color: var(--teal);
+    font-feature-settings: "tnum";
+    margin-right: 10px;
+    font-variant-numeric: tabular-nums;
+  }
+  h3 { font-size: 16px; margin: 28px 0 8px; font-weight: 600; }
+  p { margin: 0 0 14px; }
+  a { color: var(--teal-dark); }
+  code, pre, kbd { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  code { background: #fff; border: 1px solid var(--hairline); border-radius: 4px; padding: 1px 5px; font-size: 13px; }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-text);
+    padding: 18px 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  pre code { background: transparent; border: 0; padding: 0; color: inherit; font-size: inherit; }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    border-radius: 12px;
+    padding: 22px 26px;
+  }
+  .panel + .panel { margin-top: 16px; }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    margin: 8px 0 20px;
+  }
+  .stat { background: var(--panel); border: 1px solid var(--hairline); border-radius: 10px; padding: 14px 16px; }
+  .stat .label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 600; }
+  .stat .value { font-size: 22px; font-family: Georgia, serif; margin-top: 4px; }
+  .stat .value.teal { color: var(--teal); }
+  .stat .value.green { color: var(--green); }
+  .stat .value.amber { color: var(--amber); }
+  .stat .value.red { color: var(--red); }
+
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 18px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--hairline); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td .add { color: var(--add); }
+  td .rem { color: var(--rem); }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
+  .pill.green { background: #dcfce7; color: var(--green); }
+  .pill.red { background: var(--rem-bg); color: var(--rem); }
+  .pill.amber { background: var(--amber-soft); color: var(--amber); }
+  .pill.gray { background: #f3f4f6; color: var(--muted); }
+
+  .arrow { color: var(--muted); margin: 0 8px; }
+
+  .diff {
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    margin: 6px 0 18px;
+  }
+  .diff .line { display: grid; grid-template-columns: 36px 1fr; font-family: ui-monospace, Menlo, monospace; font-size: 12.5px; }
+  .diff .line .gutter { text-align: center; color: var(--muted); padding: 2px 0; user-select: none; border-right: 1px solid var(--hairline); }
+  .diff .line .body { padding: 2px 12px; white-space: pre; overflow-x: auto; }
+  .diff .line.add { background: var(--add-bg); }
+  .diff .line.add .gutter { color: var(--add); }
+  .diff .line.rem { background: var(--rem-bg); }
+  .diff .line.rem .gutter { color: var(--rem); }
+  .diff .line.ctx { background: #fafafa; color: #444; }
+  .diff .hunk { background: #eef2ff; color: #3730a3; font-size: 11.5px; padding: 4px 12px; border-bottom: 1px solid var(--hairline); }
+
+  .callout {
+    border-left: 3px solid var(--teal);
+    background: #ecfeff;
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .callout.amber { border-left-color: var(--amber); background: var(--amber-soft); }
+  .callout.red { border-left-color: var(--red); background: var(--rem-bg); }
+
+  .mermaid { background: #fff; border: 1px solid var(--hairline); border-radius: 10px; padding: 20px; margin: 12px 0 20px; }
+  .mermaid:empty { display: none; }
+
+  ol, ul { padding-left: 22px; }
+  li + li { margin-top: 6px; }
+
+  footer { margin-top: 80px; padding-top: 24px; border-top: 1px solid var(--hairline); color: var(--muted); font-size: 12.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="eyebrow">{{EYEBROW}}</div>
+  <h1>{{TITLE}}</h1>
+  <div class="meta">
+    Branch <code>{{BRANCH}}</code> ·
+    Worktree <code>{{WORKTREE_PATH}}</code> ·
+    Generated {{GENERATED_DATE}}
+  </div>
+</header>
+
+<section>
+  <h2><span class="num">1</span>Executive summary</h2>
+  {{EXEC_SUMMARY_HTML}}
+
+  <div class="summary-grid">
+    {{STATS_HTML}}
+  </div>
+
+  <p>
+    {{STATUS_PILLS_HTML}}
+  </p>
+</section>
+
+<section>
+  <h2><span class="num">2</span>Why this approach</h2>
+  {{APPROACH_HTML}}
+
+  {{KEY_INSIGHT_HTML}}
+</section>
+
+<section>
+  <h2><span class="num">3</span>Architecture</h2>
+
+  <div class="mermaid">
+{{DIAGRAM1_MERMAID}}
+  </div>
+
+  <div class="mermaid">
+{{DIAGRAM2_MERMAID}}
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">4</span>File-by-file changes</h2>
+
+  {{FILES_TABLE_HTML}}
+
+  {{FILE_DETAILS_HTML}}
+</section>
+
+<section>
+  <h2><span class="num">5</span>Test results</h2>
+  {{TEST_RESULTS_HTML}}
+</section>
+
+<section>
+  <h2><span class="num">6</span>Known caveats &amp; deferred polish</h2>
+  {{CAVEATS_HTML}}
+</section>
+
+<section>
+  <h2><span class="num">7</span>What's <em>not</em> in this change</h2>
+  {{OUT_OF_SCOPE_HTML}}
+</section>
+
+<footer>
+  Worktree: <code>{{WORKTREE_PATH}}</code> ·
+  Branch: <code>{{BRANCH}}</code> ·
+  Generated by <code>/stx-report</code>.
+</footer>
+
+</div>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: '-apple-system, "Segoe UI", Inter, sans-serif',
+      primaryColor: '#ecfeff',
+      primaryTextColor: '#0f172a',
+      primaryBorderColor: '#14b8a6',
+      lineColor: '#6b7280',
+      secondaryColor: '#f3f4f6',
+      tertiaryColor: '#fafaf9'
+    },
+    flowchart: { curve: 'basis', padding: 16 },
+    sequence: { actorMargin: 40, messageMargin: 30 }
+  });
+</script>
+</body>
+</html>
