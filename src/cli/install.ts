@@ -109,7 +109,7 @@ ${c.bold('EXAMPLES')}
   npx ../stx-skills                         # refresh all skills into cwd
   npx ../stx-skills ~/projects/my-app       # refresh skills in an explicit target
   npx ../stx-skills --link                  # symlink (dev mode)
-  npx ../stx-skills --skill image-resize    # refresh one skill only
+  npx ../stx-skills --skill stx-image    # refresh one skill only
   npx ../stx-skills --list                  # inspect what's available
 
 ${c.bold('HOW IT WORKS')}
