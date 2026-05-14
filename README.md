@@ -1,10 +1,10 @@
 # stx-skills
 
-Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection — eight slash-commands that drive feature waves, bug fixes, commits, PR merges, and documentation, all built around the worktree model. Install into any project without publishing to npm.
+Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection — nine slash-commands that drive feature waves, bug fixes, commits, PR merges, documentation, and magazine-quality reports, all built around the worktree model. Install into any project without publishing to npm.
 
 📖 **[Open the walkthrough →](https://socitix.github.io/stx-skills/)** — full doc with diagrams, expandable skill catalog, settings reference.
 
-Current release: **v1.6.0** · MIT licensed.
+Current release: **v1.7.0** · MIT licensed.
 
 ---
 
@@ -49,7 +49,7 @@ Every skill is one of three types based on where you run it:
 |---|---|---|
 | **main-bound** | You're on `main` and want to start something (skill spawns a worktree) | `/stx-feature`, `/stx-fix` |
 | **worktree-bound** | You're in a feature worktree (skill operates on it) | `/stx-pr-merge`, `/stx-report` |
-| **any-bound** | Runs anywhere — utilities | `/stx-checkin`, `/stx-image`, `/stx-help`, `/stx-help-html` |
+| **any-bound** | Runs anywhere — utilities | `/stx-checkin`, `/stx-image`, `/stx-magazine-report`, `/stx-help`, `/stx-help-html` |
 
 ### `/stx-feature` — multi-agent feature wave  *(main-bound)*
 
@@ -114,6 +114,30 @@ Produces a polished `*.html` under `docs/` documenting a worktree's changes. Sam
 ```
 
 See [.claude/skills/stx-report/SKILL.md](.claude/skills/stx-report/SKILL.md).
+
+### `/stx-magazine-report` — magazine-style HTML deliverable from any source  *(any-bound)*
+
+Turns any analytical brief — blood panel, GTM deck, 10-K, interview corpus, renovation plan — into a single self-contained `.html` file in the visual register of a printed magazine: cover, TL;DR scorecard, finding cards with severity meters, targets table, action cards with pill badges, click-to-expand detail library, donut/bar charts, closing prediction band. Print-friendly, mobile responsive, self-contained.
+
+Ships with four editorial palettes:
+
+| Style | Register | Best for |
+|---|---|---|
+| #1 Navy Blue | McKinsey-meets-Monocle | GTM, board reports, investment memos, audits |
+| #2 Veew Teal | Warmer handbook | Playbooks, onboarding, walkthroughs, customer-facing |
+| #3 Crimson Magazine | Vogue / Cereal / Kinfolk | Health, wellness, travel, food |
+| #4 Surprise me | Claude picks | Anything that doesn't fit the others |
+
+```bash
+/stx-magazine-report                                                # Fully interactive
+/stx-magazine-report --style 2 --locale "Kolkata, India"            # Pre-supply choices
+/stx-magazine-report --source ./inputs/q3-portfolio.pdf \
+                     --output ./reports/q3-portfolio.html           # Explicit I/O
+```
+
+Writes to the working folder (or topic-named subfolder). Returns the file path + top 3 findings in chat. Never commits.
+
+See [.claude/skills/stx-magazine-report/SKILL.md](.claude/skills/stx-magazine-report/SKILL.md) and the [reusable prompt template](.claude/skills/stx-magazine-report/prompt.md).
 
 ### `/stx-image` — AI-context-safe image audit  *(any-bound)*
 
@@ -222,6 +246,7 @@ stx-skills/
 │       ├── stx-checkin/        (SKILL.md + README.md)
 │       ├── stx-pr-merge/       (SKILL.md + README.md)
 │       ├── stx-image/          (SKILL.md + README.md)
+│       ├── stx-magazine-report/(SKILL.md + README.md + prompt.md)
 │       ├── stx-report/         (SKILL.md + template.html)
 │       ├── stx-help/           (SKILL.md)
 │       └── stx-help-html/      (SKILL.md + README.md + help.html)  ← canonical doc

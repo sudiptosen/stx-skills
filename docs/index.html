@@ -703,7 +703,7 @@
     <div class="pm-brand">
       <span class="pm-logo">STX <span>Skills</span></span>
       <span class="pm-sep">·</span>
-      <span class="pm-meta">Walkthrough &amp; Reference · v1.6</span>
+      <span class="pm-meta">Walkthrough &amp; Reference · v1.7</span>
     </div>
     <nav class="pm-nav" aria-label="Section navigation">
       <a href="#walkthrough" data-section="walkthrough" title="Walkthrough">01</a>
@@ -727,11 +727,11 @@
       commits, and PR merges — all built around the worktree model.
     </p>
     <div class="dash">
-      <div class="stat"><span class="n">8</span><span class="l">Skills shipped</span></div>
+      <div class="stat"><span class="n">9</span><span class="l">Skills shipped</span></div>
       <div class="stat"><span class="n">2</span><span class="l">Main-bound</span></div>
       <div class="stat"><span class="n teal">2</span><span class="l">Worktree-bound</span></div>
-      <div class="stat"><span class="n green">4</span><span class="l">Any-bound</span></div>
-      <div class="stat"><span class="n gold">v1.6</span><span class="l">Current release</span></div>
+      <div class="stat"><span class="n green">5</span><span class="l">Any-bound</span></div>
+      <div class="stat"><span class="n gold">v1.7</span><span class="l">Current release</span></div>
     </div>
   </div>
 </header>
@@ -1123,7 +1123,7 @@
         <ul>
           <li><code>/stx-feature</code> and <code>/stx-fix</code> start on main because they <em>spawn</em> a worktree.</li>
           <li><code>/stx-pr-merge</code> and <code>/stx-report</code> run inside the worktree because that's where the work lives.</li>
-          <li><code>/stx-checkin</code>, <code>/stx-image</code>, <code>/stx-help</code>, <code>/stx-help-html</code> are branch-agnostic — they don't care.</li>
+          <li><code>/stx-checkin</code>, <code>/stx-image</code>, <code>/stx-magazine-report</code>, <code>/stx-help</code>, <code>/stx-help-html</code> are branch-agnostic — they don't care.</li>
           <li>The settings file lives in main's checkout; each new worktree gets a copy at creation.</li>
         </ul>
       </div>
@@ -1173,6 +1173,7 @@
           <ul>
             <li>/stx-checkin<span class="when">commit + push with security scan</span></li>
             <li>/stx-image<span class="when">audit / resize project images</span></li>
+            <li>/stx-magazine-report<span class="when">magazine-style HTML report from any source</span></li>
             <li>/stx-help<span class="when">terse text help</span></li>
             <li>/stx-help-html<span class="when">this walkthrough</span></li>
           </ul>
@@ -1705,6 +1706,55 @@
 
 <span class="c"># Also delete unused</span>
 /stx-image <span class="o">--apply --delete-unused</span></pre>
+        </div>
+      </details>
+
+      <details class="skill" id="sk-stx-magazine-report">
+        <summary>
+          <span class="ico">M</span>
+          <span class="nm">/stx-magazine-report<span class="one">Magazine-style single-file HTML deliverable from any analytical source. Cover, chapters, severity meters, click-to-expand detail library, four editorial palettes.</span></span>
+          <span class="type type-any">any-bound</span>
+          <span class="ver">v1.0</span>
+          <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="body">
+          <p>Content-agnostic generator. Turn any analytical brief — a blood panel, a GTM deck, a 10-K, an interview corpus, a renovation plan — into a printed-magazine-quality HTML file. Cover, TL;DR scorecard, finding cards with severity meters, targets table, action cards with pill badges, click-to-expand detail library, donut/bar charts, and a closing prediction band. Print-friendly, mobile responsive, self-contained.</p>
+
+          <div class="blocks">
+            <div class="block use"><div class="lbl">Use when</div><ul>
+              <li>Deliverable needs editorial polish, not a bulleted summary</li>
+              <li>Non-specialist reader must understand a domain deeply</li>
+              <li>You want a shareable, printable, point-in-time artifact</li>
+            </ul></div>
+            <div class="block dontuse"><div class="lbl">Don't use when</div><ul>
+              <li>Short answers, code review notes, or one-page summaries (markdown is enough)</li>
+              <li>Operational dashboards that update daily</li>
+              <li>You want a worktree change-log artifact → <code>/stx-report</code></li>
+            </ul></div>
+          </div>
+
+          <h4>Four palettes</h4>
+          <table class="deftbl">
+            <thead><tr><th>Style</th><th>Register</th><th>Best for</th></tr></thead>
+            <tbody>
+              <tr><td class="k">#1 Navy Blue</td><td>McKinsey-meets-Monocle</td><td>GTM plans, board reports, investment memos, audits</td></tr>
+              <tr><td class="k">#2 Veew Teal</td><td>Warmer handbook</td><td>Playbooks, onboarding, walkthroughs, customer-facing</td></tr>
+              <tr><td class="k">#3 Crimson Magazine</td><td>Vogue / Cereal / Kinfolk</td><td>Health, wellness, travel, food</td></tr>
+              <tr><td class="k">#4 Surprise me</td><td>Claude picks</td><td>Anything that doesn't fit the others</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Invocations</h4>
+          <pre><span class="c"># Fully interactive — assistant runs the interview</span>
+/stx-magazine-report
+
+<span class="c"># Pre-supply the style and locale</span>
+/stx-magazine-report <span class="o">--style</span> 2 <span class="o">--locale</span> <span class="s">"Kolkata, India"</span>
+
+<span class="c"># Explicit source + output</span>
+/stx-magazine-report <span class="o">--source</span> ./inputs/q3-portfolio.pdf <span class="o">--output</span> ./reports/q3-portfolio.html</pre>
+
+          <p>Writes a self-contained <code>.html</code> file under the working folder (or topic-named subfolder). Returns the path + a 3-line summary in chat. Never commits.</p>
         </div>
       </details>
 

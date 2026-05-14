@@ -35,7 +35,7 @@ When this skill fires, print exactly this block (no extra commentary
 before or after):
 
 ```
-STX Skills · v1.6.0
+STX Skills · v1.7.0
 
 MAIN-BOUND       run on main, before any worktree exists
   /stx-feature        Multi-agent feature wave (Analyst → Architect → QA → Dev)
@@ -47,10 +47,11 @@ WORKTREE-BOUND   run inside a feature worktree
   /stx-report         Generate HTML report of worktree changes
 
 ANY-BOUND        runs anywhere — main or any worktree
-  /stx-checkin        Secure commit + push with security scan
-  /stx-image          Audit and optionally resize project images
-  /stx-help           This text help
-  /stx-help-html      Full walkthrough doc with diagrams (recommended)
+  /stx-checkin           Secure commit + push with security scan
+  /stx-image             Audit and optionally resize project images
+  /stx-magazine-report   Magazine-style HTML report from any source (4 palettes)
+  /stx-help              This text help
+  /stx-help-html         Full walkthrough doc with diagrams (recommended)
 
 For the walkthrough with diagrams, examples, and the settings reference:
   /stx-help-html
