@@ -1,6 +1,6 @@
 {
   "name": "stx-skills",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "Organization-wide Claude Code skills collection",
   "main": "dist/cli/install.js",
   "bin": {
@@ -27,6 +27,8 @@
     "images",
     "automation",
     "report",
+    "magazine",
+    "html",
     "worktree"
   ],
   "author": "STX",
