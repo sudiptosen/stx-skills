@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solo Skills vs. The Marketplace Bundle — A Comparison</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --ink-soft: #3d3d3d;
+    --ink-mute: #6e6e6e;
+    --paper: #f7f3ec;
+    --paper-card: #fffdf8;
+    --rule: #d8cfbf;
+    --accent: #9b3a26;          /* rust */
+    --accent-deep: #6b2917;
+    --teal: #2c5562;
+    --green: #3a6b3a;
+    --amber: #a87014;
+    --red: #b03a2e;
+    --code-bg: #f0eadd;
+    --serif: "Charter", "Iowan Old Style", "Iowan", "Palatino Linotype", "Palatino", Georgia, serif;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", Menlo, Monaco, "Courier New", monospace;
+  }
+
+  html, body { background: var(--paper); color: var(--ink); }
+  body {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  article {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 32px 96px;
+  }
+
+  /* ---- HEADER ---- */
+  header.masthead { border-bottom: 1px solid var(--rule); padding-bottom: 36px; margin-bottom: 48px; }
+  .kicker {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 54px;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0 0 24px;
+    color: var(--ink);
+  }
+  .standfirst {
+    font-size: 22px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    font-style: italic;
+    margin: 0 0 28px;
+    max-width: 620px;
+  }
+  .byline {
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-mute);
+    margin: 0;
+    letter-spacing: 0.02em;
+  }
+  .byline strong { color: var(--ink-soft); font-weight: 600; }
+
+  /* ---- BODY ---- */
+  h2 {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 32px;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin: 56px 0 20px;
+    color: var(--ink);
+  }
+  h2 .num {
+    color: var(--accent);
+    font-weight: 700;
+    margin-right: 14px;
+    font-size: 0.85em;
+  }
+  h3 {
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 17px;
+    letter-spacing: -0.005em;
+    margin: 32px 0 12px;
+    color: var(--ink);
+  }
+  p { margin: 0 0 18px; }
+  p.lede:first-of-type::first-letter {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 4.4em;
+    float: left;
+    line-height: 0.85;
+    margin: 8px 10px -4px 0;
+    color: var(--accent);
+  }
+
+  a { color: var(--accent-deep); text-decoration: none; border-bottom: 1px solid rgba(155,58,38,0.35); }
+  a:hover { border-bottom-color: var(--accent-deep); }
+
+  strong { color: var(--ink); font-weight: 700; }
+  em { color: var(--ink-soft); }
+
+  /* ---- PULL QUOTE ---- */
+  .pullquote {
+    margin: 36px -8px;
+    padding: 28px 28px 28px 32px;
+    border-left: 4px solid var(--accent);
+    background: var(--paper-card);
+    font-family: var(--serif);
+    font-size: 24px;
+    line-height: 1.35;
+    font-style: italic;
+    color: var(--ink);
+  }
+  .pullquote .attr {
+    display: block;
+    font-style: normal;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-mute);
+    margin-top: 14px;
+    letter-spacing: 0.02em;
+  }
+
+  /* ---- VERDICT CARD ---- */
+  .verdict {
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    border-top: 4px solid var(--accent);
+    padding: 28px 32px;
+    margin: 32px 0;
+    border-radius: 2px;
+  }
+  .verdict h3 {
+    margin-top: 0;
+    color: var(--accent);
+    font-size: 14px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .verdict p:last-child { margin-bottom: 0; }
+
+  /* ---- COMPARISON GRID ---- */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin: 28px 0 36px;
+  }
+  .compare > div {
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    padding: 22px 24px;
+    border-radius: 2px;
+  }
+  .compare h4 {
+    font-family: var(--sans);
+    margin: 0 0 14px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-mute);
+    font-weight: 700;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 10px;
+  }
+  .compare h4 .badge {
+    float: right;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-mute);
+    background: var(--code-bg);
+    padding: 2px 8px;
+    border-radius: 2px;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .compare ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .compare ul li {
+    padding: 6px 0 6px 18px;
+    position: relative;
+    color: var(--ink-soft);
+  }
+  .compare ul li::before {
+    content: "▸";
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-size: 11px;
+    top: 11px;
+  }
+  .compare ul li code {
+    background: var(--code-bg);
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-size: 13px;
+  }
+
+  /* ---- TABLE ---- */
+  table.scoreboard {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 28px 0;
+    font-family: var(--sans);
+    font-size: 14px;
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+  }
+  table.scoreboard th, table.scoreboard td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+  table.scoreboard th {
+    background: var(--code-bg);
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+  table.scoreboard tr:last-child td { border-bottom: none; }
+  table.scoreboard td.dim { color: var(--ink-mute); }
+  table.scoreboard td.win-stx { color: var(--green); font-weight: 600; }
+  table.scoreboard td.win-ecc { color: var(--accent-deep); font-weight: 600; }
+  table.scoreboard td.tie { color: var(--ink-soft); }
+
+  /* ---- WINS / GAPS ---- */
+  .doing-right, .gap {
+    background: var(--paper-card);
+    border-left: 3px solid var(--green);
+    padding: 18px 22px;
+    margin: 14px 0;
+  }
+  .gap { border-left-color: var(--amber); }
+  .gap.severe { border-left-color: var(--red); }
+  .doing-right h3, .gap h3 {
+    margin: 0 0 8px;
+    font-family: var(--sans);
+    font-size: 16px;
+    color: var(--ink);
+  }
+  .doing-right p, .gap p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  .doing-right .label, .gap .label {
+    display: inline-block;
+    font-family: var(--sans);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-right: 8px;
+    vertical-align: 1px;
+  }
+  .doing-right .label { background: rgba(58,107,58,0.15); color: var(--green); }
+  .gap .label { background: rgba(168,112,20,0.15); color: var(--amber); }
+  .gap.severe .label { background: rgba(176,58,46,0.15); color: var(--red); }
+
+  /* ---- LEARN LIST ---- */
+  ol.learn {
+    list-style: none;
+    counter-reset: lesson;
+    padding: 0;
+    margin: 32px 0 0;
+  }
+  ol.learn li {
+    counter-increment: lesson;
+    padding: 22px 24px 22px 70px;
+    margin: 0;
+    background: var(--paper-card);
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    margin-bottom: 12px;
+    position: relative;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+  }
+  ol.learn li::before {
+    content: counter(lesson, decimal-leading-zero);
+    position: absolute;
+    left: 22px;
+    top: 22px;
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+  }
+  ol.learn li h3 {
+    margin: 0 0 8px;
+    font-family: var(--sans);
+    font-size: 17px;
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ---- CODE BLOCK ---- */
+  pre, code { font-family: var(--mono); }
+  pre {
+    background: var(--code-bg);
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.55;
+    border-radius: 3px;
+    border: 1px solid var(--rule);
+    margin: 18px 0;
+  }
+  p code, li code, td code { background: var(--code-bg); padding: 1px 6px; border-radius: 2px; font-size: 0.85em; }
+
+  /* ---- FIRST MOVES ---- */
+  .first-moves {
+    background: linear-gradient(180deg, var(--paper-card) 0%, var(--paper) 100%);
+    border: 1px solid var(--rule);
+    border-top: 4px solid var(--teal);
+    padding: 32px;
+    border-radius: 2px;
+    margin: 36px 0;
+  }
+  .first-moves h2 { margin-top: 0; }
+  .first-moves .move {
+    border-left: 2px solid var(--teal);
+    padding: 4px 0 4px 18px;
+    margin: 18px 0;
+  }
+  .first-moves .move strong { color: var(--teal); display: block; font-size: 13px; font-family: var(--sans); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+
+  footer.colophon {
+    margin-top: 72px;
+    padding-top: 28px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-mute);
+    line-height: 1.55;
+  }
+
+  @media (max-width: 640px) {
+    article { padding: 36px 22px 60px; }
+    h1 { font-size: 38px; }
+    h2 { font-size: 26px; }
+    .standfirst { font-size: 18px; }
+    .compare { grid-template-columns: 1fr; }
+    .pullquote { font-size: 20px; margin-left: -4px; margin-right: -4px; }
+  }
+</style>
+</head>
+<body>
+<article>
+
+<header class="masthead">
+  <p class="kicker">A comparison &amp; gap analysis</p>
+  <h1>Solo skills vs.<br>the marketplace bundle</h1>
+  <p class="standfirst">A viral X thread sells a 38-agent, 156-skill bundle that supposedly replaces a $15K-a-month engineering team. You've quietly built five hand-crafted skills that ship to a Git remote and install with one <code>npx</code>. Which approach is actually the right one for a one-person operation — and what are you missing?</p>
+  <p class="byline">Compiled from <a href="https://x.com/noisyb0y1/status/2044692412061425748">@noisyb0y1's thread</a> and the <strong>stx-skills</strong> repo · May 9, 2026</p>
+</header>
+
+<p class="lede">The thread is breathlessly written. "One solo founder ships like a team of 3-4 people." "Replaces $8,000–15,000 a month of developers." "12% of community skills are malware." Underneath the hype, though, there's a real architecture being described — Anthropic's plugin marketplace, security scanning of agent configs, a continuous-learning layer, and the recognition that skills should load only when needed. Your stx-skills repo, by contrast, is built without any of that ecosystem. Five skills, hand-rolled, distributed by GitHub URL, governed by a CLAUDE.md you wrote yourself. That's not better or worse on its own. It's a different bet, and it's worth understanding both before you decide where to spend your next Sunday afternoon.</p>
+
+<div class="verdict">
+  <h3>The verdict, up front</h3>
+  <p>Your skills are <strong>more rigorous than ECC's marketing suggests its skills are</strong> — your <code>fix-issue</code> skill has explicit halt conditions, governance integration, and a hard QA/Coder separation rule. ECC's pitch trades in volume (38 / 156 / 72) and outcomes ("ships like 3 people"), which is a smell. <em>But</em> the ECC ecosystem ships infrastructure you don't have: <strong>plugin packaging</strong>, <strong>security scanning of your own setup</strong>, <strong>session-persistent memory</strong>, <strong>model routing</strong>, and a <strong>generic planner / sub-agent dispatcher</strong>. None of those are theoretical. All of them are buildable. If you want to operate as a one-person army for real, your next moves are infrastructural, not "more skills."</p>
+</div>
+
+<h2><span class="num">01</span>The pitch in the thread</h2>
+
+<p>The thread describes <strong>Everything Claude Code (ECC)</strong> by <code>affaan-m</code>. The sales pitch:</p>
+
+<div class="pullquote">
+  "38 specialized agents, 156 skills, 72 commands, a security scanner with 1,282 tests, and a system that learns from every session."
+  <span class="attr">— @noisyb0y1, paraphrasing the ECC bundle</span>
+</div>
+
+<p>The author keeps emphasizing volume because volume is what reads as "complete." Look past the numbers, and what's actually interesting is the <em>shape</em> of the bundle:</p>
+
+<ul>
+  <li><strong>Plugin marketplace install</strong>: <code>/plugin marketplace add affaan-m/everything-claude-code</code> followed by <code>/plugin install</code>. Selective install via <code>--profile developer --with lang:typescript --without skill:continuous-learning</code>. This is Anthropic's official plugin mechanism — multiple skills, MCP servers, agents, and commands bundled and versioned together.</li>
+  <li><strong>Agents as specialists, not chatbots</strong>: <code>planner</code>, <code>security-reviewer</code>, <code>typescript-reviewer</code>, <code>debugger</code>, <code>pytorch-build-resolver</code>. Each one is a sub-agent the orchestrator dispatches to.</li>
+  <li><strong>"Skills don't eat your context window constantly"</strong>: skills activate only when relevant. This is just the standard Claude Code skill-discovery model, but it's worth saying out loud — the description field on your SKILL.md is the activation surface, not just documentation.</li>
+  <li><strong>AgentShield</strong>: a security scanner over <code>CLAUDE.md</code>, <code>settings.json</code>, MCP configs, hooks, agents, and skills. <code>npx ecc-agentshield scan --opus</code> runs a red-team / blue-team / auditor pipeline of three Opus agents and produces a graded risk report. This part is genuinely novel and not something you have.</li>
+  <li><strong>Continuous learning</strong>: confidence-weighted "instincts" that build up over sessions. Pattern detected three times → confidence 0.6 → applied automatically. (How real this is in practice is unverified.)</li>
+  <li><strong>Companion repos</strong>: <code>claude-mem</code> (SQLite-backed session memory) and <code>obra/superpowers</code> (forces TDD / structured thinking before code).</li>
+</ul>
+
+<p>One honest note: the same author posts threads about a "trading bot that wins 68.4% of the time" and links to a Telegram channel. That's a tell. Treat the volume claims as <em>marketing</em> and the underlying architecture as <em>useful prior art</em>.</p>
+
+<h2><span class="num">02</span>What you've actually built</h2>
+
+<p>Your <code>stx-skills</code> repo is a 5-skill collection. Compiled from TypeScript source, distributed without an npm registry, governed by your global CLAUDE.md. Quick anatomy:</p>
+
+<table class="scoreboard">
+  <thead>
+    <tr><th>Skill</th><th>Type</th><th>SKILL.md lines</th><th>Source lines</th><th>Sophistication</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>git-checkin</code></td><td class="dim">CLI binary + skill</td><td>129</td><td>680 TS</td><td>Mid — security scan, branch-aware push, dry-run</td></tr>
+    <tr><td><code>git-pr-merge</code></td><td class="dim">CLI binary + skill</td><td>181</td><td>790 TS</td><td>High — multi-step gated chain, fallback paths</td></tr>
+    <tr><td><code>image-resize</code></td><td class="dim">CLI binary + skill</td><td>91</td><td>708 TS</td><td>Mid — analysis-first, opt-in mutation</td></tr>
+    <tr><td><code>gen-worktree-report</code></td><td class="dim">CLI binary + skill + template</td><td>145</td><td>380 TS</td><td>Mid — single-file HTML output, Mermaid via CDN</td></tr>
+    <tr><td><code>fix-issue</code></td><td class="dim">Pure conversational</td><td>176</td><td>0</td><td><strong>High</strong> — sub-agent orchestrator, halt conditions, governance-aware</td></tr>
+  </tbody>
+</table>
+
+<p>What's clearly intentional in your design:</p>
+
+<div class="compare">
+  <div>
+    <h4>The good calls <span class="badge">stx-skills</span></h4>
+    <ul>
+      <li>Distribution via <code>npx github:user/repo</code> — no registry, no publish step, refresh-on-reinstall</li>
+      <li>TypeScript source compiled to <code>dist/</code>, <code>SKILL.md</code> as separate documentation surface</li>
+      <li>YAML frontmatter on every <code>SKILL.md</code> (<code>name</code>, <code>description</code>, <code>version</code>, <code>author</code>)</li>
+      <li>"When to use" / "When NOT to use" sections — explicit triggering boundaries</li>
+      <li><code>fix-issue</code> references your global CLAUDE.md governance rules directly (worktree-first, no commits without approval)</li>
+      <li>Skills can be either CLI-binary (<code>git-checkin</code>) or pure conversational (<code>fix-issue</code>) — you understand both shapes</li>
+    </ul>
+  </div>
+  <div>
+    <h4>The shape of the gap <span class="badge">stx-skills</span></h4>
+    <ul>
+      <li>No skill discovery telemetry — you don't know when a skill should have triggered and didn't</li>
+      <li>No security scan over your own CLAUDE.md / settings.json / skills</li>
+      <li>No persistent session memory beyond the auto-memory file system</li>
+      <li>No generic planner — only the QA→Coder loop in <code>fix-issue</code></li>
+      <li>No model routing (Haiku for routine, Sonnet default, Opus for design)</li>
+      <li>No CI integration — skills are interactive only</li>
+      <li>Not packaged as a Claude Code plugin (no <code>/plugin marketplace add</code>)</li>
+    </ul>
+  </div>
+</div>
+
+<h2><span class="num">03</span>Side by side</h2>
+
+<table class="scoreboard">
+  <thead>
+    <tr><th>Capability</th><th>ECC (the thread)</th><th>stx-skills (you)</th><th>Winner</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Number of skills</strong></td>
+      <td>156 generic, broad coverage</td>
+      <td>5 hand-crafted, narrow scope</td>
+      <td class="tie">Tie — different bets</td>
+    </tr>
+    <tr>
+      <td><strong>Skill quality (depth, halts, governance)</strong></td>
+      <td>Marketed on volume, depth unverified</td>
+      <td>Halt conditions, governance refs, acceptance gates</td>
+      <td class="win-stx">stx-skills</td>
+    </tr>
+    <tr>
+      <td><strong>Distribution</strong></td>
+      <td>Anthropic plugin marketplace</td>
+      <td><code>npx github:user/repo</code> — clever, but private</td>
+      <td class="win-ecc">ECC</td>
+    </tr>
+    <tr>
+      <td><strong>Security scanning of own config</strong></td>
+      <td>AgentShield: 1,282 tests, --opus red/blue/audit pipeline</td>
+      <td>None</td>
+      <td class="win-ecc">ECC</td>
+    </tr>
+    <tr>
+      <td><strong>Session-persistent memory</strong></td>
+      <td>claude-mem (SQLite, 5 hooks, web viewer)</td>
+      <td>auto-memory files (preferences only, not work history)</td>
+      <td class="win-ecc">ECC (with caveats)</td>
+    </tr>
+    <tr>
+      <td><strong>Sub-agent orchestration</strong></td>
+      <td>Generic planner dispatches to 38 specialists</td>
+      <td><code>fix-issue</code> only — QA→Coder, hard-coded pair</td>
+      <td class="win-ecc">ECC pattern</td>
+    </tr>
+    <tr>
+      <td><strong>Slash commands as muscle memory</strong></td>
+      <td>72 — <code>/review</code>, <code>/plan</code>, <code>/tdd</code>, <code>/quality-gate</code></td>
+      <td>Skills serve this role; no separate command layer</td>
+      <td class="win-ecc">ECC distinction</td>
+    </tr>
+    <tr>
+      <td><strong>Model routing</strong></td>
+      <td><code>/model-route</code> — pick model per task</td>
+      <td>None</td>
+      <td class="win-ecc">ECC</td>
+    </tr>
+    <tr>
+      <td><strong>CI / hook integration</strong></td>
+      <td>GitHub Action for AgentShield in CI</td>
+      <td>None</td>
+      <td class="win-ecc">ECC</td>
+    </tr>
+    <tr>
+      <td><strong>Audit / self-grading</strong></td>
+      <td><code>/harness-audit</code> grades your setup</td>
+      <td>None</td>
+      <td class="win-ecc">ECC</td>
+    </tr>
+    <tr>
+      <td><strong>Honesty about failure modes</strong></td>
+      <td>"Ships like 3-4 people" / "$15K/mo"</td>
+      <td>"If iteration cap trips, write handoff doc, escalate"</td>
+      <td class="win-stx">stx-skills</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The scoreboard looks one-sided in ECC's favor, but six of those wins are <em>infrastructure</em> wins, not <em>skills</em> wins. ECC's individual skills are almost certainly worse than yours; their plumbing is better.</p>
+
+<h2><span class="num">04</span>What you're doing right — be honest about it too</h2>
+
+<p>Don't underweight these. They're real.</p>
+
+<div class="doing-right">
+  <h3><span class="label">Win</span>You picked quality over quantity</h3>
+  <p>Five skills you've actually used and refined will outperform 156 skills cargo-culted from a marketplace. The <code>fix-issue</code> skill alone is more rigorous than what 80% of "agent frameworks" ship: it has a hard rule that the Coder cannot edit test files, an explicit acceptance gate before any work begins, a soft cap of 3 cycles on the same surface symptom, and a mandate to write a handoff doc rather than silently retry. That's the shape of a tool built by someone who has watched agents go off the rails.</p>
+</div>
+
+<div class="doing-right">
+  <h3><span class="label">Win</span>Distribution model is genuinely clever</h3>
+  <p><code>npx github:sudiptosen/stx-skills</code> sidesteps the entire npm-publish dance. You don't need a registry, you don't need to maintain a published version, and re-running refreshes in place. The <code>prepare</code> script in your <code>package.json</code> means TypeScript builds during install, so the bin is always current. This is the right model for a personal-org tool. Most "Claude skills marketplaces" have <em>worse</em> install ergonomics than this.</p>
+</div>
+
+<div class="doing-right">
+  <h3><span class="label">Win</span>Skills compose with your governance system</h3>
+  <p>You've already done the hard merge work on your global CLAUDE.md (data protection, no-commits rule, multi-step approval exception). The <code>fix-issue</code> skill explicitly references those rules — "This skill operates under the user's CRITICAL governance rules from <code>~/.claude/CLAUDE.md</code>." Most skill collections are written in isolation from any user governance and end up either fighting your rules or ignoring them. Yours don't.</p>
+</div>
+
+<div class="doing-right">
+  <h3><span class="label">Win</span>Pure-conversational and binary skills coexist</h3>
+  <p><code>fix-issue</code> has zero source lines and lives entirely in <code>SKILL.md</code> — orchestration prompt only. <code>git-pr-merge</code> has 790 lines of TypeScript. You understand that "skill" is a spectrum from prompt-only to compiled-binary, and you pick the right point for each problem. Many people writing about Claude skills don't make this distinction.</p>
+</div>
+
+<h2><span class="num">05</span>What's missing — without sugarcoating</h2>
+
+<div class="gap severe">
+  <h3><span class="label">Gap</span>You have no security audit of your own setup</h3>
+  <p>You have a global CLAUDE.md, project CLAUDE.mds, several MCP servers connected, hooks in <code>~/.claude/settings.json</code>, and self-built skills that exec arbitrary shell. You have no automated check for: hardcoded secrets in CLAUDE.md, overly permissive hook patterns, prompt-injection-prone skill descriptions, or supply-chain risk in skills you might install from elsewhere. The thread cites a January 2026 incident where 12% of community skills on one marketplace were malware. Whether that number is real or marketing, the attack surface is. You should at minimum have a manual checklist; ideally an <code>npx</code> scan you can run pre-commit on your own <code>~/.claude/</code>.</p>
+</div>
+
+<div class="gap">
+  <h3><span class="label">Gap</span>No session-persistent work memory</h3>
+  <p>Your auto-memory system (<code>~/.claude/memory/</code>) captures preferences and feedback well. It does <em>not</em> capture: what files you touched yesterday, what bug you were chasing, what test was flaky last week, what decision you made and why on a specific PR. <code>claude-mem</code> in the thread is one approach (SQLite + 5 hooks + web viewer); you could also build something simpler — a per-session JSON file written by a post-tool-use hook. The point is: every new session starting from cold context is a real cost.</p>
+</div>
+
+<div class="gap">
+  <h3><span class="label">Gap</span>No generic planner / sub-agent dispatcher</h3>
+  <p><code>fix-issue</code> is a hard-coded QA→Coder pair. It works because bugfixing has that exact shape. Most other work doesn't. You have no skill that says "here's an arbitrary task, decompose it into 2–4 specialist sub-tasks, dispatch in parallel, synthesize the results." That's the meta-skill that turns one operator into a team of 3–4. ECC calls this "planner." You'd build it as a SKILL.md that uses the <code>Agent</code> tool with explicit role prompts. Your <code>fix-issue</code> already knows how to spawn sub-agents — generalize that pattern.</p>
+</div>
+
+<div class="gap">
+  <h3><span class="label">Gap</span>No skill activation evals</h3>
+  <p>You can't measure whether your skills trigger when they should and stay silent when they shouldn't. Anthropic's official <code>skill-creator</code> skill includes eval support — give it a benchmark set of "this user prompt should trigger skill X" and it measures precision/recall on the description field. You can iterate on your <code>description:</code> until activation is reliable. Without this loop, your skills drift: a skill that triggered correctly six months ago may misfire today and you won't know until it breaks something.</p>
+</div>
+
+<div class="gap">
+  <h3><span class="label">Gap</span>No model routing</h3>
+  <p>Cost difference between Haiku and Opus is 30–60×. You're almost certainly running Sonnet or Opus on tasks Haiku could finish — file rename, simple grep, "fix this typo," boilerplate generation. A 30-line skill that classifies the incoming prompt and routes ("simple file op → haiku, default → sonnet, design/architecture → opus") would pay for itself in a week.</p>
+</div>
+
+<div class="gap">
+  <h3><span class="label">Gap</span>You're not packaged as a plugin</h3>
+  <p>Your <code>npx</code> distribution is great for you. It does not ride the Anthropic plugin ecosystem — no <code>/plugin marketplace add</code>, no per-plugin install/update cycle, no shared discovery. If you want anyone else (a future you, a contractor, a friend) to benefit from stx-skills, the gap between "clone this repo and run npx" and "/plugin install stx-skills" is the difference between zero adopters and ten. The conversion is mechanical: a <code>plugin.json</code> manifest pointing at your skill directories.</p>
+</div>
+
+<div class="gap">
+  <h3><span class="label">Gap</span>No CI / hook automation</h3>
+  <p>Your <code>git-pr-merge</code> skill runs interactively — you have to invoke it. It cannot enforce, say, "every PR runs the security scan and the lint gate before being mergeable" without a human pressing the button. The newer Claude Code hook system can fire skills on git events. Combined with a GitHub Action that runs your skills headlessly, you can move from "I run my quality gate when I remember to" to "the gate runs on every push and PR."</p>
+</div>
+
+<div class="gap">
+  <h3><span class="label">Gap</span>No slash-command layer separate from skills</h3>
+  <p>Your skills serve as both the discovery surface and the execution. ECC distinguishes <em>commands</em> (lightweight prompt templates — one slash, fixed-shape prompt) from <em>skills</em> (richer SKILL.md with orchestration). For things like <code>/review</code>, <code>/plan</code>, <code>/tdd</code>, the command shape is enough. You could have 20 commands that each take 30 seconds to write, on top of your 5 skills. They're cheap to author and reduce per-task prompt-engineering overhead.</p>
+</div>
+
+<h2><span class="num">06</span>Eight concepts to learn next</h2>
+
+<p>If you want to operate as a one-person team for real, these are the foundations. None of them are exotic — they're each one weekend of focused work.</p>
+
+<ol class="learn">
+  <li>
+    <h3>Skill discovery economics</h3>
+    The <code>description:</code> field on a SKILL.md is the activation surface. Claude reads <em>only</em> the descriptions of available skills (not their bodies) when deciding what to invoke. A description that says "use this for git operations" is too vague; one that says "use when the user wants to commit, push, or open a PR — handles security scan, branch awareness, and Co-Authored-By line" is precise. Read your five descriptions critically through this lens.
+  </li>
+  <li>
+    <h3>The plugin manifest format</h3>
+    Anthropic's plugin marketplace runs on a <code>plugin.json</code> file that declares: skills, MCP servers, slash commands, hooks, and metadata. Read the docs once. You can convert <code>stx-skills</code> to a plugin in an afternoon. Then your install becomes <code>/plugin marketplace add sudiptosen/stx-skills</code> and Claude handles updates, version pinning, and selective install.
+  </li>
+  <li>
+    <h3>Subagent orchestration patterns</h3>
+    The Agent tool spawns isolated Claude instances with their own context. <em>Planner</em> pattern: one agent breaks down work and dispatches specialists. <em>Map-reduce</em> pattern: spawn N agents on parallel chunks, synthesize results. <em>Critic-author</em> pattern: one writes, one reviews, iterate. Your <code>fix-issue</code> uses the QA-Coder version. Generalize.
+  </li>
+  <li>
+    <h3>Evaluation as a discipline</h3>
+    For prompts what tests are for code. The <code>skill-creator</code> skill ships with eval support — give it a benchmark set ("prompt X should trigger skill Y, prompt Z should not") and it scores. Without evals you're flying blind on whether descriptions still work after a refactor. This is also where "instincts" / "continuous learning" stops being a marketing claim and becomes measurable.
+  </li>
+  <li>
+    <h3>The Claude attack surface</h3>
+    Prompt injection via tool results (a web page that says "ignore previous instructions"). Skills from untrusted sources executing arbitrary code. Hooks with overly broad shell patterns. MCP servers with known CVEs. Hardcoded secrets in CLAUDE.md getting committed. Read Anthropic's security docs end-to-end once. Build a manual checklist; later, automate it.
+  </li>
+  <li>
+    <h3>Memory architecture beyond auto-memory</h3>
+    Auto-memory is rules. CLAUDE.md is policy. Neither is work history. <code>claude-mem</code>-style session continuity captures: files you touched, decisions made, patterns observed, code you wrote, repos you cloned. This is a separate persistence layer. Build the simplest thing that could work — a JSON file written by a post-session hook — before evaluating off-the-shelf options.
+  </li>
+  <li>
+    <h3>Model routing economics</h3>
+    Internalize the per-token cost of each model in your head. Haiku is for boilerplate and routine. Sonnet is your default. Opus is for architecture, design, multi-file refactors, and tasks where one wrong decision costs an hour of cleanup. A skill that routes by classification is one of the highest-ROI things you can build.
+  </li>
+  <li>
+    <h3>Hooks &amp; CI</h3>
+    Claude Code's hook system fires shell commands on events — pre-prompt, post-tool-use, pre-commit, etc. Combined with GitHub Actions, you move from "I run my checks" to "the checks run on every push, with human-readable output in the PR." This is how you stop being the bottleneck.
+  </li>
+</ol>
+
+<div class="first-moves">
+  <h2 style="margin-top:0;"><span class="num">07</span>First three moves</h2>
+
+  <p>Don't try to do everything. Pick three things, finish them, then evaluate.</p>
+
+  <div class="move">
+    <strong>Move 1 · This week</strong>
+    Convert <code>stx-skills</code> to a plugin manifest and try <code>/plugin marketplace add sudiptosen/stx-skills</code>. Even if you're the only user, the install ergonomics get cleaner and you'll learn the format. Also: re-read every <code>description:</code> in every <code>SKILL.md</code> through the activation lens above. Tighten any that sound like documentation rather than triggers.
+  </div>
+
+  <div class="move">
+    <strong>Move 2 · Next two weeks</strong>
+    Build a security-scan skill for your own setup. Start with a 50-line script that greps <code>~/.claude/CLAUDE.md</code>, all project CLAUDE.mds, and <code>~/.claude/settings.json</code> for: things that look like API keys, hooks with <code>**</code> or <code>*</code> patterns, MCP server URLs that aren't pinned. Output a graded report. Don't try to match AgentShield's 1,282 tests — start with 10 and iterate.
+  </div>
+
+  <div class="move">
+    <strong>Move 3 · The month after</strong>
+    Build a generic planner skill. Take the orchestration logic from <code>fix-issue</code> (acceptance gate, sub-agent dispatch, halt conditions) and generalize it: takes a task description, asks 2–3 clarifying questions, breaks the task into 2–4 sub-tasks, presents the plan, dispatches each sub-task to a sub-agent, synthesizes. This is the meta-skill that compounds — every other skill you build becomes more powerful when it can be planned-into.
+  </div>
+</div>
+
+<h2><span class="num">08</span>One last honest take</h2>
+
+<p>The X thread is selling certainty. <em>"Install 4 plugins in 5 minutes. Replace a $15K/month team."</em> The <code>fix-issue</code> SKILL.md says, <em>"If the iteration cap trips, write the handoff doc to <code>docs/tasks/&lt;title-slug&gt;-handoff.md</code> and surface to the user with a one-paragraph summary. Do NOT silently retry."</em></p>
+
+<p>Those sentences come from different worlds. One is a sales pitch. The other is what someone writes after watching an agent confidently produce 400 lines of broken code at 2 AM. You're operating from the second world. That's the right place to be operating from. The thread's marketing is the noise; the underlying ecosystem (plugins, scanning, persistent memory, sub-agent dispatch, evals) is the signal. Adopt the signal — but don't trade your honesty about failure modes for someone else's promise that the new thing will just work.</p>
+
+<p>Be a one-person army by being the kind of one-person army that knows where the gaps are. You're closer than the thread would have you believe. The work to close the rest is real, but it's not exotic.</p>
+
+<footer class="colophon">
+  Sources: <a href="https://x.com/noisyb0y1/status/2044692412061425748">@noisyb0y1's thread on X</a> · the local <code>~/Documents/mystuff/stx/stx-skills</code> repo (<code>v1.3.0</code>, 5 skills, 3,564 LoC including TS source). ECC volume claims (38/156/72/1,282) are taken from the thread and not independently verified against the upstream repo. Compiled May 9, 2026.
+</footer>
+
+</article>
+</body>
+</html>
