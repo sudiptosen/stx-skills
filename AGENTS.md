@@ -21,7 +21,8 @@ Personas are **not** modified by skills at runtime. To evolve a contract, edit t
 |---|---|---|---|---|
 | Analyst | [`.claude/agents/stx-analyst.md`](.claude/agents/stx-analyst.md) | 1.0.0 | Decomposes feature request into Features with acceptance criteria | `/stx-feature` (Step 2) |
 | Architect | [`.claude/agents/stx-architect.md`](.claude/agents/stx-architect.md) | 1.0.0 | Decomposes Features into tier-tagged Tasks with scope_paths + dependencies | `/stx-feature` (Step 3 + soft-cap escalation in Step 6) |
-| QA | [`.claude/agents/stx-qa.md`](.claude/agents/stx-qa.md) | 1.0.0 | Authors failing tests; reruns them; only agent that may edit test files | `/stx-feature` (Step 4 + Step 6 loop), `/stx-fix` (loop) |
+| QA | [`.claude/agents/stx-qa.md`](.claude/agents/stx-qa.md) | 1.0.0 | Authors failing tests; reruns them; only agent that may edit test files | `/stx-feature` (Step 4 + Step 6 test rerun), `/stx-fix` (loop) |
+| Reviewer | [`.claude/agents/stx-reviewer.md`](.claude/agents/stx-reviewer.md) | 1.0.0 | Reads Dev diff between Dev hand-back and QA rerun; emits structured verdict; detects test-file edits + assertion-weakening + SUT mocking as halt offenses | `/stx-feature` (Step 6, between Dev and QA) |
 | Coder | [`.claude/agents/stx-coder.md`](.claude/agents/stx-coder.md) | 1.0.0 | Single-bug implementer for /stx-fix | `/stx-fix` (loop) |
 | Dev (universal prelude) | [`.claude/agents/stx-dev-base.md`](.claude/agents/stx-dev-base.md) | 1.0.0 | QA-Dev contract, scope guardrails, story-style code, hand-back format | `/stx-feature` (Step 5, every Dev) |
 | Dev (db tier) | [`.claude/agents/stx-dev-tier-db.md`](.claude/agents/stx-dev-tier-db.md) | 1.0.0 | DB-tier overlay: migrations, RLS, data-protection guards | `/stx-feature` (Step 5 when `task.tier == "db"`) |
@@ -29,7 +30,7 @@ Personas are **not** modified by skills at runtime. To evolve a contract, edit t
 | Dev (api tier) | [`.claude/agents/stx-dev-tier-api.md`](.claude/agents/stx-dev-tier-api.md) | 1.0.0 | API-tier overlay: thin handlers, Zod, auth, idempotency | `/stx-feature` (Step 5 when `task.tier == "api"`) |
 | Dev (ui tier) | [`.claude/agents/stx-dev-tier-ui.md`](.claude/agents/stx-dev-tier-ui.md) | 1.0.0 | UI-tier overlay: React + Tailwind + shadcn, a11y, browser verification | `/stx-feature` (Step 5 when `task.tier == "ui"`) |
 
-Total: **9 personas** across **2 skills**.
+Total: **10 personas** across **2 skills**.
 
 ## Persona frontmatter shape
 
@@ -64,7 +65,7 @@ The version field is **independent** of `package.json`. Personas evolve at their
 - **Wikilinks for cross-references.** Use `[[stx-dev-base]]` inside a persona body to reference another persona. The orchestrator resolves these as relative paths.
 - **No inline contracts in SKILL.md files.** If a SKILL.md needs to spawn an agent, it loads the persona by file reference. The grep guard for this is:
   ```bash
-  grep -rE "Analyst's contract|Architect's contract|QA's contract|Coder's contract" .claude/skills/
+  grep -rE "Analyst's contract|Architect's contract|QA's contract|Coder's contract|Reviewer's contract" .claude/skills/
   ```
   Should return zero hits (except in `## See also` / `## Personas` reference blocks).
 

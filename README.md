@@ -1,10 +1,10 @@
 # stx-skills
 
-Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection — nine slash-commands and nine versioned agent personas that drive feature waves, bug fixes, commits, PR merges, documentation, and magazine-quality reports, all built around the worktree model. Install into any project without publishing to npm.
+Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection — nine slash-commands and ten versioned agent personas that drive feature waves, bug fixes, commits, PR merges, documentation, and magazine-quality reports, all built around the worktree model. Install into any project without publishing to npm.
 
 📖 **[Open the walkthrough →](https://socitix.github.io/stx-skills/)** — full doc with diagrams, expandable skill catalog, settings reference.
 
-Current release: **v1.8.0** · MIT licensed.
+Current release: **v1.9.0** · MIT licensed.
 
 ---
 
@@ -41,15 +41,16 @@ npx ../stx-skills --help
 
 ---
 
-## Agents (new in v1.8)
+## Agents (Wave 1 v1.8 → Wave 2 v1.9)
 
-The four-role multi-agent wave (Analyst → Architect → QA → Dev) and the two-role bug-fix loop (QA → Coder) now spawn agents from versioned persona files under [`.claude/agents/`](.claude/agents/) instead of inline prompts in `SKILL.md`. Nine personas total:
+The multi-agent wave (`/stx-feature`) and the bug-fix loop (`/stx-fix`) spawn agents from versioned persona files under [`.claude/agents/`](.claude/agents/) instead of inline prompts in `SKILL.md`. **Ten personas** total — the **Reviewer is new in v1.9**, sitting between Dev hand-back and QA's test rerun:
 
 | Persona | Role | Consumed by |
 |---|---|---|
 | `stx-analyst.md` | Decomposes feature request → Features with acceptance criteria | `/stx-feature` |
 | `stx-architect.md` | Decomposes Features → tier-tagged Tasks | `/stx-feature` |
 | `stx-qa.md` | Authors failing tests, reruns them, only agent that may edit tests | `/stx-feature`, `/stx-fix` |
+| **`stx-reviewer.md`** ★ | **Reads Dev diff between Dev and QA. Emits structured verdict; halt on test-file edit / weakened assertion / SUT mock.** | **`/stx-feature` (new in v1.9)** |
 | `stx-coder.md` | Single-bug implementer | `/stx-fix` |
 | `stx-dev-base.md` | Universal Dev prelude (scope guardrails, hand-back format) | `/stx-feature` |
 | `stx-dev-tier-db.md` | DB-tier overlay: migrations, RLS, data-protection guards | `/stx-feature` |
@@ -57,7 +58,7 @@ The four-role multi-agent wave (Analyst → Architect → QA → Dev) and the tw
 | `stx-dev-tier-api.md` | API-tier overlay: thin handlers, Zod, auth, idempotency | `/stx-feature` |
 | `stx-dev-tier-ui.md` | UI-tier overlay: React + Tailwind + shadcn, a11y | `/stx-feature` |
 
-See [`AGENTS.md`](AGENTS.md) for the full inventory, frontmatter spec, and versioning policy. Each wave records its `persona_versions` in `wave-state.json` for reproducibility.
+See [`AGENTS.md`](AGENTS.md) for the full inventory, frontmatter spec, and versioning policy. Each wave records its `persona_versions` (including the Reviewer) in `wave-state.json` for reproducibility. The Reviewer's verdicts are appended to `wave-state.json.reviewer_verdicts[]` per iteration — the foundation for Wave 3 (execution-feedback loop) metrics.
 
 The installer copies `.claude/agents/` alongside `.claude/skills/` into every consuming project.
 
@@ -263,10 +264,11 @@ stx-skills/
 │   └── index.html                            # GitHub Pages — synced from help.html
 ├── AGENTS.md                                 # persona inventory (v1.8+)
 ├── .claude/
-│   ├── agents/                               # 9 versioned persona files
+│   ├── agents/                               # 10 versioned persona files
 │   │   ├── stx-analyst.md
 │   │   ├── stx-architect.md
 │   │   ├── stx-qa.md                        # shared by stx-feature + stx-fix
+│   │   ├── stx-reviewer.md                  # new in v1.9 — between Dev and QA
 │   │   ├── stx-coder.md
 │   │   ├── stx-dev-base.md
 │   │   └── stx-dev-tier-{db,service,api,ui}.md
