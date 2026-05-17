@@ -1,7 +1,7 @@
 ---
 name: stx-feature
-description: Drives a multi-agent feature implementation wave. Interviews the user, runs Analyst → Architect → QA in sequence (each behind a gate), then schedules tier-specialized Dev agents under QA control. Produces requirement-verse.html, architecture-verse.html, qa-verse.html, and result.html artifacts in docs/waves/. Use when a new feature (multi-task, possibly multi-tier) needs to be implemented, not a single bug fix.
-version: 1.1.0
+description: Drives a multi-agent feature implementation wave. Interviews the user, runs Analyst → Architect → QA in sequence (each behind a gate), then schedules tier-specialized Dev agents under a Reviewer + QA control loop. Produces requirement-verse.html, architecture-verse.html, qa-verse.html, and result.html artifacts in docs/waves/. Use when a new feature (multi-task, possibly multi-tier) needs to be implemented, not a single bug fix.
+version: 1.2.0
 author: STX
 ---
 
@@ -19,7 +19,8 @@ Every agent contract lives in its own file under `.claude/agents/`. The skill lo
 |---|---|---|
 | `.claude/agents/stx-analyst.md` | Analyst | Step 2 |
 | `.claude/agents/stx-architect.md` | Architect | Step 3 (and Step 6 on escalation) |
-| `.claude/agents/stx-qa.md` | QA | Step 4 + QA-Dev loop in Step 6 |
+| `.claude/agents/stx-qa.md` | QA | Step 4 + Step 6 (test rerun after Reviewer approves) |
+| `.claude/agents/stx-reviewer.md` | Reviewer (new in v1.2) | Step 6, between Dev hand-back and QA rerun |
 | `.claude/agents/stx-dev-base.md` | Dev (universal prelude) | Step 5 (every Dev) |
 | `.claude/agents/stx-dev-tier-db.md` | Dev (db tier) | Step 5 when `task.tier == "db"` |
 | `.claude/agents/stx-dev-tier-service.md` | Dev (service tier) | Step 5 when `task.tier == "service"` |
@@ -113,6 +114,7 @@ Also at this step: record the persona versions that will drive the wave. Read th
   "analyst": "1.0.0",
   "architect": "1.0.0",
   "qa": "1.0.0",
+  "reviewer": "1.0.0",
   "dev_base": "1.0.0",
   "dev_tier_db": "1.0.0",
   "dev_tier_service": "1.0.0",
@@ -179,7 +181,7 @@ After concatenating the two persona files, append the task-specific context:
 
 The Dev follows the contract in its persona files. Do not re-explain Dev rules here — the persona files are the source of truth.
 
-### Step 6 — QA ↔ Dev loop
+### Step 6 — Dev ↔ Reviewer ↔ QA loop
 
 Per task:
 
@@ -188,18 +190,30 @@ QA confirms test fails for the right reason
    ↓
 Dev (tier-specialized) implements
    ↓
-Dev runs test + lint + build
+Dev runs test + lint + build, hands back diff
    ↓
-QA reruns test independently  ← QA's verification contract from .claude/agents/stx-qa.md
+Reviewer reads diff vs task spec  ← .claude/agents/stx-reviewer.md
+   ├─ approved=true       → hand off to QA
+   ├─ approved=false      → bounce to Dev with concerns[] (iteration++)
+   └─ halt verdict        → STOP wave for this task (test-file edit / SUT mock / assertion weakened)
+   ↓
+QA reruns test independently      ← .claude/agents/stx-qa.md verification contract
    ├─ green → mark task done
-   └─ red → return to Dev with specific failure
+   └─ red   → return to Dev with specific failure (iteration++)
 ```
 
-**Caps:**
-- **Soft cap — 3 iterations on the same task:** halt this task, escalate to Architect. Re-spawn the Architect with its persona file plus the task context. Architect may amend `architecture-verse.html` (append a "Revision N" section — never overwrite), then the loop resumes.
-- **Hard cap — 5 total iterations on the same task:** halt the wave for this task. Write `handoff.md` and surface to user.
+**Why the Reviewer sits between Dev and QA.** Without a Reviewer, QA's rerun is the only signal between "Dev says done" and "task closed." A Dev that mocks the system-under-test or weakens the assertion can drive QA green and bypass the test the bug was written to catch. The Reviewer is the integrity gate: it reads the diff, line-by-line, before QA touches it. Its verdict is appended to `wave-state.json.reviewer_verdicts[]` per iteration.
 
-QA's pause authority (build breaks twice, scope violation, test-bypass detection) is defined in `.claude/agents/stx-qa.md` under **Pause authority**.
+**Spawning the Reviewer.** After every Dev hand-back, spawn the Reviewer via `Agent` with `subagent_type: general-purpose`. Paste the contents of `.claude/agents/stx-reviewer.md` verbatim, then append:
+
+> The Dev's diff (full output of `git diff` since the last accepted state) is below. The task spec is at `<path-to-architecture-verse.html>`, task id `<task.id>`. The failing test file is at `<task.test_path>`. Prior reviewer_verdicts[] for this task: `<json>`. Apply your checklist and emit your verdict per the persona contract.
+
+**Caps:**
+- **Soft cap — 3 iterations on the same task:** halt this task, escalate to Architect. An iteration is incremented by **either** a Reviewer rejection **or** a QA red — both count. Re-spawn the Architect with its persona file plus the task context + the latest reviewer verdict. Architect may amend `architecture-verse.html` (append a "Revision N" section — never overwrite), then the loop resumes.
+- **Hard cap — 5 total iterations on the same task:** halt the wave for this task. Write `handoff.md` and surface to user.
+- **Reviewer halt verdict — instant wave halt for this task:** `test-file-edit-detected`, `assertion-weakened`, or `sut-mocked` short-circuits the loop without incrementing counters. The user decides whether to escalate to Architect or close out the wave.
+
+QA's pause authority (build breaks twice, scope violation, test-bypass detection caught at rerun time) is defined in `.claude/agents/stx-qa.md` under **Pause authority**. Reviewer halts and QA pauses are independent — a Dev can be halted by either.
 
 ### Step 7 — Feature done / Wave done
 
@@ -213,19 +227,21 @@ Final orchestrator step:
 1. Update `wave-state.json` with final status.
 2. Render `result.html` from the bundled template, including:
    - Per-feature, per-task status table
-   - Iteration counts per task
+   - Iteration counts per task (broken down: Reviewer rejections vs QA reds)
+   - `reviewer_verdicts[]` array per task (the full verdict trail with concerns/suggestions)
    - `suspicious[]` array fully rendered (one row per event)
    - `escalations[]` (when Architect was re-engaged)
    - `persona_versions` (the locked snapshot from Step 1)
    - Files touched (deduplicated)
-   - Total agents spawned and total run time
+   - Total agents spawned and total run time (now includes reviewer count)
 3. Surface to user with a one-paragraph summary and next-action prompt (commit? PR?).
 
 ## Iteration caps (summary)
 
-- **Soft cap — 3 same-task iterations:** halt task, escalate to Architect, append Revision section.
+- **Soft cap — 3 same-task iterations:** halt task, escalate to Architect, append Revision section. An iteration = one Reviewer rejection OR one QA red.
 - **Hard cap — 5 same-task iterations:** halt wave, write `handoff.md`.
 - **Suspicious-changes ceiling — 3 events on the same task:** auto-halt the task even if not at iteration cap.
+- **Reviewer halt verdicts (instant):** `test-file-edit-detected`, `assertion-weakened`, `sut-mocked` — no counter increment, immediate halt.
 
 These reconcile the user's auto-memory `feedback_qa_fixer_workflow.md` (≤3 same-topic) with the longer-running nature of feature work (multi-task loop).
 
@@ -240,6 +256,7 @@ The skill stops and surfaces — never silently continues — when:
 - The Architect cannot tier a task (`tier == "unknown"` → halt, ask user).
 - The QA agent cannot write a test for a task (timing-sensitive, infra-dependent) — QA documents *why* and proposes manual verification; orchestrator surfaces this rather than silently skipping.
 - A Dev agent edits a test file or touches files outside `scope_paths`.
+- The Reviewer returns a halt verdict (`test-file-edit-detected`, `assertion-weakened`, `sut-mocked`) — instant halt for the task, no iteration counter increment.
 - An iteration cap or suspicious-changes ceiling trips.
 - `npm run lint` or `npm run build` fails for a reason unrelated to the task.
 - Out-of-scope guardrails (from `requirement-verse.html` or `architecture-verse.html`) are violated.

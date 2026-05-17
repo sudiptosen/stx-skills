@@ -13,7 +13,7 @@
     {{FINISHED_AT}}
     {{STATUS}}                   done | halted-at-cap | blocked
     {{TOTAL_ITERATIONS}}
-    {{AGENTS_SPAWNED}}           e.g. "Analyst×1, Architect×1, QA×1, Dev×7"
+    {{AGENTS_SPAWNED}}           e.g. "Analyst×1, Architect×1, QA×1, Reviewer×9, Dev×7"
     {{COMMIT_POLICY}}            from interview
     {{NEXT_ACTION}}              one-line recommendation for the user
     {{#each features}}
@@ -25,6 +25,7 @@
         {{title}}
         {{tier}}
         {{iterations_used}}
+        {{reviewer_rejection_count}}   tally of approved=false from this task's reviewer_verdicts[]
         {{status}}               done | halted | skipped
         {{notes}}                one short line if anything notable
       {{/each}}
@@ -37,11 +38,26 @@
       {{description}}
       {{resolution}}             resolved | accepted | open
     {{/each}}
+    {{#each reviewer_verdicts}}
+      {{task_id}}                F1-T2
+      {{iteration}}              1, 2, 3 …
+      {{at}}                     timestamp
+      {{approved}}               true | false
+      {{verdict}}                approved | concerns | test-file-edit-detected | assertion-weakened | sut-mocked
+      {{diff_summary}}           {files_in_scope, files_out_of_scope, lines_added, lines_removed}
+      {{#each concerns}}
+        {{kind}}                 scope-drift | pattern-divergence | result-shape | typing | …
+        {{file}} : {{line}}
+        {{summary}}
+        {{severity}}             high | medium | low
+      {{/each}}
+      {{suggested_revisions}}    list of one-line revision suggestions
+    {{/each}}
     {{#each escalations}}
       {{n}}
       {{task_id}}
       {{at}}
-      {{trigger}}                soft-cap-hit | suspicious-ceiling | qa-pause
+      {{trigger}}                soft-cap-hit | suspicious-ceiling | qa-pause | reviewer-halt
       {{architect_summary}}      what changed in architecture-verse.html
     {{/each}}
     {{#each files_touched}}
@@ -93,6 +109,7 @@
           <th style="width:80px">Tier</th>
           <th>Title</th>
           <th style="width:80px">Iter.</th>
+          <th style="width:90px">Reviewer ✗</th>
           <th style="width:90px">Status</th>
           <th>Notes</th>
         </tr>
@@ -104,6 +121,7 @@
           <td><span class="tier tier-{{tier}}">{{tier}}</span></td>
           <td>{{title}}</td>
           <td>{{iterations_used}}</td>
+          <td style="font-size:13px;color:var(--muted)">{{reviewer_rejection_count}}</td>
           <td><span class="status status-{{status}}">{{status}}</span></td>
           <td style="font-size:13px;color:var(--muted)">{{notes}}</td>
         </tr>
@@ -113,7 +131,41 @@
   </div>
   {{/each}}
 
-  <h2><span class="num">§3</span> Suspicious events</h2>
+  <h2><span class="num">§3</span> Reviewer verdicts</h2>
+  <p>Append-only log of every Reviewer spawn. <code>concerns</code> = approved-false with one or more named concerns (counts toward soft cap). <code>test-file-edit-detected</code> / <code>assertion-weakened</code> / <code>sut-mocked</code> = instant halt verdicts (no counter increment, immediate wave stop for the task).</p>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:90px">Task</th>
+        <th style="width:60px">Iter.</th>
+        <th style="width:160px">When</th>
+        <th style="width:90px">Approved</th>
+        <th style="width:170px">Verdict</th>
+        <th>Concerns / suggestions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each reviewer_verdicts}}
+      <tr>
+        <td><code>{{task_id}}</code></td>
+        <td>{{iteration}}</td>
+        <td style="font-size:12.5px;color:var(--muted)">{{at}}</td>
+        <td><span class="status status-{{approved}}">{{approved}}</span></td>
+        <td><code>{{verdict}}</code></td>
+        <td style="font-size:13px;color:var(--muted)">
+          {{#each concerns}}
+          <div><strong>{{kind}}</strong> ({{severity}}) {{#if file}}<code>{{file}}:{{line}}</code>{{/if}} — {{summary}}</div>
+          {{/each}}
+          {{#each suggested_revisions}}
+          <div style="opacity:0.75;font-style:italic">→ {{.}}</div>
+          {{/each}}
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+  <h2><span class="num">§4</span> Suspicious events</h2>
   <p>Real-time log of scope-drift, test-file touches, mocks-of-SUT, and unrelated build breaks. Each event was flagged by QA when it happened; the rows below are the audit trail.</p>
   <table>
     <thead>
@@ -138,7 +190,7 @@
     </tbody>
   </table>
 
-  <h2><span class="num">§4</span> Architect escalations</h2>
+  <h2><span class="num">§5</span> Architect escalations</h2>
   <p>Each row is a soft-cap trip that re-engaged the Architect. The Architect amended architecture-verse.html — see Revisions section there for the deltas.</p>
   <table>
     <thead>
@@ -163,7 +215,7 @@
     </tbody>
   </table>
 
-  <h2><span class="num">§5</span> Files touched</h2>
+  <h2><span class="num">§6</span> Files touched</h2>
   <table>
     <thead>
       <tr>

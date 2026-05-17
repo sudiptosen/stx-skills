@@ -100,8 +100,50 @@
           "n": { "type": "integer", "minimum": 1 },
           "task_id": { "type": "string" },
           "at": { "type": "string", "format": "date-time" },
-          "trigger": { "enum": ["soft-cap-hit", "suspicious-ceiling", "qa-pause"] },
+          "trigger": { "enum": ["soft-cap-hit", "suspicious-ceiling", "qa-pause", "reviewer-halt"] },
           "architect_summary": { "type": "string" }
+        }
+      }
+    },
+    "reviewer_verdicts": {
+      "type": "array",
+      "description": "Append-only log of Reviewer verdicts. One entry per Reviewer spawn (one per Dev hand-back). Feeds Wave 3 metrics — rejection rate per tier, most-common concern kind, concerns that persist past iteration 2.",
+      "items": {
+        "type": "object",
+        "required": ["task_id", "iteration", "at", "approved", "verdict"],
+        "properties": {
+          "task_id": { "type": "string", "pattern": "^F[0-9]+-T[0-9]+$" },
+          "iteration": { "type": "integer", "minimum": 1, "description": "Iteration counter for this task at the time of review." },
+          "at": { "type": "string", "format": "date-time" },
+          "approved": { "type": "boolean" },
+          "verdict": { "enum": ["approved", "concerns", "test-file-edit-detected", "assertion-weakened", "sut-mocked"] },
+          "diff_summary": {
+            "type": "object",
+            "properties": {
+              "files_in_scope": { "type": "array", "items": { "type": "string" } },
+              "files_out_of_scope": { "type": "array", "items": { "type": "string" } },
+              "lines_added": { "type": "integer", "minimum": 0 },
+              "lines_removed": { "type": "integer", "minimum": 0 }
+            }
+          },
+          "concerns": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["kind", "summary", "severity"],
+              "properties": {
+                "kind": { "enum": ["scope-drift", "pattern-divergence", "result-shape", "typing", "smallest-change", "comment-debt", "error-handling", "smell", "out-of-scope-frozen"] },
+                "file": { "type": "string" },
+                "line": { "type": "integer" },
+                "summary": { "type": "string" },
+                "severity": { "enum": ["high", "medium", "low"] }
+              }
+            }
+          },
+          "suggested_revisions": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
         }
       }
     },
@@ -124,17 +166,19 @@
         "analyst": { "type": "integer" },
         "architect": { "type": "integer" },
         "qa": { "type": "integer" },
+        "reviewer": { "type": "integer" },
         "dev": { "type": "integer" }
       }
     },
     "persona_versions": {
       "type": "object",
       "description": "Snapshot of .claude/agents/*.md version fields at wave start. Locks the wave to a specific persona generation for reproducibility and cross-wave metric aggregation.",
-      "required": ["analyst", "architect", "qa", "dev_base", "dev_tier_db", "dev_tier_service", "dev_tier_api", "dev_tier_ui"],
+      "required": ["analyst", "architect", "qa", "reviewer", "dev_base", "dev_tier_db", "dev_tier_service", "dev_tier_api", "dev_tier_ui"],
       "properties": {
         "analyst": { "type": "string", "description": "Version of .claude/agents/stx-analyst.md" },
         "architect": { "type": "string", "description": "Version of .claude/agents/stx-architect.md" },
         "qa": { "type": "string", "description": "Version of .claude/agents/stx-qa.md" },
+        "reviewer": { "type": "string", "description": "Version of .claude/agents/stx-reviewer.md" },
         "dev_base": { "type": "string", "description": "Version of .claude/agents/stx-dev-base.md" },
         "dev_tier_db": { "type": "string", "description": "Version of .claude/agents/stx-dev-tier-db.md" },
         "dev_tier_service": { "type": "string", "description": "Version of .claude/agents/stx-dev-tier-service.md" },

@@ -703,7 +703,7 @@
     <div class="pm-brand">
       <span class="pm-logo">STX <span>Skills</span></span>
       <span class="pm-sep">·</span>
-      <span class="pm-meta">Walkthrough &amp; Reference · v1.8</span>
+      <span class="pm-meta">Walkthrough &amp; Reference · v1.9</span>
     </div>
     <nav class="pm-nav" aria-label="Section navigation">
       <a href="#walkthrough" data-section="walkthrough" title="Walkthrough">01</a>
@@ -728,10 +728,10 @@
     </p>
     <div class="dash">
       <div class="stat"><span class="n">9</span><span class="l">Skills shipped</span></div>
-      <div class="stat"><span class="n teal">9</span><span class="l">Personas</span></div>
+      <div class="stat"><span class="n teal">10</span><span class="l">Personas</span></div>
       <div class="stat"><span class="n green">2</span><span class="l">Skills consume them</span></div>
       <div class="stat"><span class="n">5</span><span class="l">Any-bound</span></div>
-      <div class="stat"><span class="n gold">v1.8</span><span class="l">Current release</span></div>
+      <div class="stat"><span class="n gold">v1.9</span><span class="l">Current release</span></div>
     </div>
   </div>
 </header>
@@ -1407,15 +1407,16 @@
       <div class="sect-tag">Click any row to expand.</div>
 
       <div class="callout">
-        <strong>New in v1.8:</strong> Agent contracts are now versioned persona files under <code>.claude/agents/</code> (loaded by reference, no longer embedded in SKILL.md). Nine personas across two skills — see <a href="https://github.com/socitix/stx-skills/blob/main/AGENTS.md"><code>AGENTS.md</code></a> for the full inventory and frontmatter shape. Each wave records its <code>persona_versions</code> in <code>wave-state.json</code> for reproducibility.
+        <strong>New in v1.9:</strong> The <code>stx-reviewer</code> persona joins the wave loop between Dev hand-back and QA rerun. Reads the Dev's diff, emits a structured verdict (<code>approved</code>, <code>concerns[]</code>, or one of three instant-halt verdicts for test-file edits, weakened assertions, or SUT mocking), and writes to <code>wave-state.json.reviewer_verdicts[]</code>. Catches test-bypass before QA's rerun goes green. Ten personas across two skills — see <a href="https://github.com/socitix/stx-skills/blob/main/AGENTS.md"><code>AGENTS.md</code></a> for the full inventory.<br><br>
+        <em>v1.8 (previous):</em> Agent contracts moved out of <code>SKILL.md</code> into versioned files under <code>.claude/agents/</code>. Loaded by reference at spawn time. Each wave records <code>persona_versions</code> for reproducibility.
       </div>
 
       <details class="skill" id="sk-stx-feature">
         <summary>
           <span class="ico">F</span>
-          <span class="nm">/stx-feature<span class="one">Multi-agent feature wave. Analyst → Architect → QA → Dev. Three gates, tier-specialized Devs, suspicious-change tracking. Personas live in <code>.claude/agents/</code>.</span></span>
+          <span class="nm">/stx-feature<span class="one">Multi-agent feature wave. Analyst → Architect → QA → Dev with Reviewer gate between Dev and QA (v1.2). Three approval gates, tier-specialized Devs, suspicious-change tracking, reviewer_verdicts[] trail. Personas live in <code>.claude/agents/</code>.</span></span>
           <span class="type type-main">main-bound</span>
-          <span class="ver">v1.1</span>
+          <span class="ver">v1.2</span>
           <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </summary>
         <div class="body">
