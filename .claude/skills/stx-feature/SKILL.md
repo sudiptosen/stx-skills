@@ -1,7 +1,7 @@
 ---
 name: stx-feature
 description: Drives a multi-agent feature implementation wave. Interviews the user, runs Analyst → Architect → QA in sequence (each behind a gate), then schedules tier-specialized Dev agents under QA control. Produces requirement-verse.html, architecture-verse.html, qa-verse.html, and result.html artifacts in docs/waves/. Use when a new feature (multi-task, possibly multi-tier) needs to be implemented, not a single bug fix.
-version: 1.0.0
+version: 1.1.0
 author: STX
 ---
 
@@ -10,6 +10,23 @@ author: STX
 A guided multi-agent feature-implementation workflow. The skill interviews the user about a desired feature, runs three specialist agents (Analyst, Architect, QA) sequentially — each behind a user-approval gate — and then dispatches one or more tier-specialized Dev agents in a QA-controlled loop until every task in every feature is green.
 
 This skill is a **sibling** to `/stx-fix`, not a replacement. `/stx-fix` handles a single reproducible bug with two agents (QA + Coder); `/stx-feature` handles new functionality that decomposes into multiple features and tasks across tiers (database / service / API / UI).
+
+## Personas (loaded by reference)
+
+Every agent contract lives in its own file under `.claude/agents/`. The skill loads them at spawn time — it never embeds them inline. See [`AGENTS.md`](../../../AGENTS.md) at the repo root for the full inventory.
+
+| Persona file | Role | Used in |
+|---|---|---|
+| `.claude/agents/stx-analyst.md` | Analyst | Step 2 |
+| `.claude/agents/stx-architect.md` | Architect | Step 3 (and Step 6 on escalation) |
+| `.claude/agents/stx-qa.md` | QA | Step 4 + QA-Dev loop in Step 6 |
+| `.claude/agents/stx-dev-base.md` | Dev (universal prelude) | Step 5 (every Dev) |
+| `.claude/agents/stx-dev-tier-db.md` | Dev (db tier) | Step 5 when `task.tier == "db"` |
+| `.claude/agents/stx-dev-tier-service.md` | Dev (service tier) | Step 5 when `task.tier == "service"` |
+| `.claude/agents/stx-dev-tier-api.md` | Dev (api tier) | Step 5 when `task.tier == "api"` |
+| `.claude/agents/stx-dev-tier-ui.md` | Dev (ui tier) | Step 5 when `task.tier == "ui"` |
+
+When spawning each agent, paste the contents of the matching persona file into the agent's prompt verbatim, then prepend any task-specific context (task spec, file paths, prior verdicts). The orchestrator does NOT re-implement persona logic.
 
 ## When to use it
 
@@ -37,7 +54,7 @@ This skill operates under the user's CRITICAL governance rules from `~/.claude/C
 - **Feature** — a kanban card. Lives in `requirement-verse.html`. Has acceptance criteria.
 - **Task** — a unit of implementation work under a Feature. Lives in `architecture-verse.html`. Each task is tagged with a `tier` (db / service / api / ui) and `scope_paths` (the files it may touch). One QA test maps to each task.
 - **Gate** — a hard pause where the user must approve an artifact (HTML) before the next phase runs.
-- **Tier-specialized Dev agent** — a Dev agent spawned with a tier-specific prompt prelude (DB / Service / API / UI), determined by the task's `tier` field.
+- **Tier-specialized Dev agent** — a Dev agent spawned with `stx-dev-base.md` plus the matching `stx-dev-tier-*.md` persona overlay, determined by the task's `tier` field.
 
 ## Artifacts (written into the consuming project)
 
@@ -45,7 +62,7 @@ Everything lives under `docs/waves/wave-{slug}-{xxx}/` in the consuming repo:
 
 | File | Owner | Purpose |
 |---|---|---|
-| `wave-state.json` | Skill orchestrator | Source of truth: features, tasks, statuses, iteration counters, `suspicious[]`, `escalations[]` |
+| `wave-state.json` | Skill orchestrator | Source of truth: features, tasks, statuses, iteration counters, `suspicious[]`, `escalations[]`, `persona_versions` |
 | `requirement-verse.html` | Analyst | Rendered Features list with acceptance criteria |
 | `architecture-verse.html` | Architect | Rendered Tasks per Feature with tier + scope_paths + revisions on escalation |
 | `qa-verse.html` | QA Agent | Rendered list of failing tests, mapped task → test file |
@@ -89,67 +106,50 @@ If so, take the argument as `initial_request`. Otherwise, ask the user one open 
 
 This is the **seed** for everything downstream. Subsequent agents add clarity; they do not replace it.
 
+Also at this step: record the persona versions that will drive the wave. Read the YAML frontmatter of every persona file under `.claude/agents/` and write a `persona_versions` block to `wave-state.json`:
+
+```json
+"persona_versions": {
+  "analyst": "1.0.0",
+  "architect": "1.0.0",
+  "qa": "1.0.0",
+  "dev_base": "1.0.0",
+  "dev_tier_db": "1.0.0",
+  "dev_tier_service": "1.0.0",
+  "dev_tier_api": "1.0.0",
+  "dev_tier_ui": "1.0.0"
+}
+```
+
+This locks the wave to a specific persona snapshot — essential for future cross-wave metrics aggregation.
+
 ### Step 2 — Analyst (Agent 1)
 
-Spawn the Analyst via `Agent` with `subagent_type: general-purpose` (or `Explore` for read-only research first if scoping is unclear).
+**Spawn:** `Agent` with `subagent_type: general-purpose` (or `Explore` for read-only research first if scoping is unclear). Paste the contents of `.claude/agents/stx-analyst.md` into the agent's prompt verbatim, then append:
 
-**Analyst's contract:**
-1. Read `initial_request`. Explore the consuming codebase to understand existing system shape — what tables, services, routes, components are touched.
-2. Interview the user (via `AskUserQuestion`, grouped 2–4 questions per call) to clarify:
-   - What problem is this feature solving?
-   - Who is the user / actor?
-   - Acceptance criteria per feature (one numbered list per feature).
-   - Blast radius from the **existing system** point of view (which user flows, which data shapes, which permissions).
-   - Out-of-scope items (explicit non-goals).
-3. Decompose the initial_request into **1..N Features**, each a kanban card with:
-   - `id` (`F1`, `F2`, ...)
-   - `title`
-   - `actor`
-   - `acceptance_criteria` (numbered list)
-   - `existing_system_impact` (paragraphs / bullets)
-   - `out_of_scope` (bullets)
-4. Write Features to `wave-state.json` and render `requirement-verse.html` from the bundled template.
+> The current wave-state is at `<path-to-wave-state.json>`. The initial request is: `<initial_request>`. The bundled template for requirement-verse.html is at `<path-to-templates/requirement-verse.html>`.
+
+The Analyst follows the contract in its persona file. Do not embed contract logic here.
 
 ★ **Gate 1: user approves `requirement-verse.html`.** Use `AskUserQuestion` with three options: *Approve*, *Edit a feature*, *Cancel wave*. Do not proceed without explicit approval.
 
 ### Step 3 — Architect (Agent 2)
 
-Spawn the Architect via `Agent` with `subagent_type: general-purpose`.
+**Spawn:** `Agent` with `subagent_type: general-purpose`. Paste the contents of `.claude/agents/stx-architect.md` into the agent's prompt verbatim, then append:
 
-**Architect's contract:**
-1. Read `requirement-verse.html` AND `wave-state.json` AND any project-level architecture docs (`CLAUDE.md`, `~/.claude/CODING_REFERENCE.md`).
-2. Interview the user **only for gaps** — do NOT re-ask anything the Analyst already captured. Acceptable Architect questions are about *implementation strategy*, not requirements.
-3. For each Feature, decompose into **1..N Tasks**, each tagged with:
-   - `id` (`F1-T1`, `F1-T2`, ...)
-   - `title`
-   - `tier`: one of `db` / `service` / `api` / `ui` (drives Dev specialization)
-   - `scope_paths`: array of file globs the task may touch (used by parallelism scheduler)
-   - `depends_on`: array of task IDs that must complete first
-   - `acceptance_test_hint`: how QA should test this (full sentence, not just kind)
-   - `existing_patterns_to_follow`: bullet list citing existing files/patterns in the codebase that this task should mirror
-4. Encourage **decoupled, simplistic, reusable** designs. Architect must explicitly cite **at least one existing pattern** per Feature that the implementation should mirror (e.g. "follow the three-tier service pattern in `lib/services/`").
-5. Write Tasks to `wave-state.json` and render `architecture-verse.html`.
+> The approved requirement-verse.html is at `<path>`. The current wave-state is at `<path>`. The bundled template for architecture-verse.html is at `<path>`.
+
+The Architect follows the contract in its persona file.
 
 ★ **Gate 2: user approves `architecture-verse.html`.** Scope is now FROZEN — anything not listed in tasks or marked in scope_paths is off-limits for the wave.
 
 ### Step 4 — QA Agent (Agent 3)
 
-Spawn the QA agent via `Agent` with `subagent_type: general-purpose`.
+**Spawn:** `Agent` with `subagent_type: general-purpose`. Paste the contents of `.claude/agents/stx-qa.md` into the agent's prompt verbatim, then append:
 
-**QA's contract:**
-1. Read `requirement-verse.html`, `architecture-verse.html`, and `wave-state.json`.
-2. For each task, decide test kind:
-   - `playwright` if `tier == "ui"` and the task touches user-visible workflow
-   - `e2e` if `tier == "db"` or `tier == "api"` (hits the database or external services)
-   - `vitest-unit` if `tier == "service"` and the logic is pure / resource-free
-   - When in doubt, prefer the *higher-fidelity* test (Playwright > E2E > unit)
-3. If `vitest-unit` is needed and Vitest is not configured in the consuming project, propose scaffolding it. **User approval required** before adding the dev dependency or config — present as `AskUserQuestion`.
-4. Write **failing** tests. Each test must:
-   - Live in the right folder (`playwright-tests/` for UI, `e2e/` for service/API, `__tests__/` or `*.test.ts` for unit per project convention).
-   - Map to exactly one task ID (`F1-T1`, etc.) — recorded in a JSDoc/header comment for traceability.
-   - Fail for the right reason (the feature isn't built yet), not config drift.
-5. Run the tests. Paste output as evidence.
-6. Update `wave-state.json` with `test_path` per task. Render `qa-verse.html`.
+> The approved requirement-verse.html and architecture-verse.html are at `<paths>`. The current wave-state is at `<path>`. The bundled template for qa-verse.html is at `<path>`.
+
+The QA agent follows the **authoring contract** section of its persona file.
 
 ★ **Gate 3 (Dry-run boundary): user approves `qa-verse.html` AND the failing tests.** This is the most expensive gate to fail past — failing tests that encode the wrong acceptance criteria poison the rest of the wave.
 
@@ -163,24 +163,21 @@ After gate 3 approval, the orchestrator schedules Dev agents.
 - A task is **eligible** when all its `depends_on` tasks are `done`.
 - Two eligible tasks may run **in parallel** only if their `scope_paths` arrays have **no overlap** (no shared files, no shared globs).
 - Concurrency cap: 3 parallel Dev agents by default (user-configurable in interview).
-- Each Dev agent is spawned with a **tier-specialized prompt prelude** based on `task.tier`:
-  - `db` — Supabase migrations, RLS, schema; warned about data-protection rule
-  - `service` — pure functions / three-tier service pattern; warned about result-shape conventions
-  - `api` — thin route handlers; warned about not embedding business logic
-  - `ui` — React/Tailwind/shadcn; warned about a11y and existing component reuse
 
-**Dev contract:**
-1. Read the failing test mapped to this task.
-2. Read existing_patterns_to_follow from architecture-verse.
-3. Implement the **smallest change** within `scope_paths` that turns the test green.
-4. Run the test. Run `npm run lint` and `npm run build`. If UI, optionally verify via Chrome DevTools/Playwright MCP.
-5. Hand back to QA: files changed (with line refs), test output, lint/build status, browser notes (if applicable).
+**Persona dispatch.** Each Dev agent is spawned with a tier-specialized prompt assembled from two persona files:
 
-**Hard rules for Dev:**
-- MUST NOT edit any test file (halt-the-loop offense).
-- MUST NOT touch files outside its declared `scope_paths` (halt-the-loop offense, logged to `suspicious[]`).
-- MUST NOT weaken or skip assertions, add mocks that bypass the test, or otherwise game the contract.
-- Story-style code is a guideline (action-named helpers, short functions) but NOT a halt condition.
+| `task.tier` | Persona files to concatenate (base first, then tier overlay) |
+|---|---|
+| `db` | `.claude/agents/stx-dev-base.md` + `.claude/agents/stx-dev-tier-db.md` |
+| `service` | `.claude/agents/stx-dev-base.md` + `.claude/agents/stx-dev-tier-service.md` |
+| `api` | `.claude/agents/stx-dev-base.md` + `.claude/agents/stx-dev-tier-api.md` |
+| `ui` | `.claude/agents/stx-dev-base.md` + `.claude/agents/stx-dev-tier-ui.md` |
+
+After concatenating the two persona files, append the task-specific context:
+
+> Your task is `<task.id> — <task.title>`. The failing test is at `<task.test_path>`. `scope_paths`: `<task.scope_paths>`. `existing_patterns_to_follow`: `<task.existing_patterns_to_follow>`. The architecture-verse.html with the frozen out-of-scope list is at `<path>`.
+
+The Dev follows the contract in its persona files. Do not re-explain Dev rules here — the persona files are the source of truth.
 
 ### Step 6 — QA ↔ Dev loop
 
@@ -193,21 +190,16 @@ Dev (tier-specialized) implements
    ↓
 Dev runs test + lint + build
    ↓
-QA reruns test independently
+QA reruns test independently  ← QA's verification contract from .claude/agents/stx-qa.md
    ├─ green → mark task done
    └─ red → return to Dev with specific failure
 ```
 
 **Caps:**
-- **Soft cap — 3 iterations on the same task:** halt this task, escalate to Architect. Architect re-reads the task in context, may amend `architecture-verse.html` (a new "Revision N" section is appended, not overwritten), then the loop resumes.
+- **Soft cap — 3 iterations on the same task:** halt this task, escalate to Architect. Re-spawn the Architect with its persona file plus the task context. Architect may amend `architecture-verse.html` (append a "Revision N" section — never overwrite), then the loop resumes.
 - **Hard cap — 5 total iterations on the same task:** halt the wave for this task. Write `handoff.md` and surface to user.
 
-**QA may pause a Dev** if:
-- Build breaks more than once in a row, OR
-- The Dev's diff touches files outside `scope_paths` (logged to `suspicious[]` and surfaced immediately), OR
-- The Dev introduces obvious test-bypass (mock of the system under test, env-var skip, etc.).
-
-A paused Dev waits for orchestrator decision: resume with a corrective prompt, escalate to Architect, or halt.
+QA's pause authority (build breaks twice, scope violation, test-bypass detection) is defined in `.claude/agents/stx-qa.md` under **Pause authority**.
 
 ### Step 7 — Feature done / Wave done
 
@@ -224,6 +216,7 @@ Final orchestrator step:
    - Iteration counts per task
    - `suspicious[]` array fully rendered (one row per event)
    - `escalations[]` (when Architect was re-engaged)
+   - `persona_versions` (the locked snapshot from Step 1)
    - Files touched (deduplicated)
    - Total agents spawned and total run time
 3. Surface to user with a one-paragraph summary and next-action prompt (commit? PR?).
@@ -241,6 +234,7 @@ These reconcile the user's auto-memory `feedback_qa_fixer_workflow.md` (≤3 sam
 The skill stops and surfaces — never silently continues — when:
 
 - Worktree state cannot be confirmed (detached HEAD, no git, etc.).
+- A persona file under `.claude/agents/` cannot be read at spawn time (treat as a fatal config error — do not fall back to inline prompts).
 - The user declines any of the three gates.
 - The Analyst cannot extract features from the initial_request (vague request — surfaces a clarifying interview round).
 - The Architect cannot tier a task (`tier == "unknown"` → halt, ask user).
@@ -265,13 +259,15 @@ This skill does not have a CLI binary — it is purely conversational and runs i
 - Node.js 18+ for `npm run lint` / `npm run build`.
 - A buildable command and at least one test runner in the consuming project (Playwright, Vitest, or both). Vitest is scaffolded only with user approval.
 - For browser verification: Chrome DevTools or Playwright MCP server registered in the session.
+- The eight persona files at `.claude/agents/stx-{analyst,architect,qa,dev-base,dev-tier-db,dev-tier-service,dev-tier-api,dev-tier-ui}.md`. The installer copies these alongside `.claude/skills/`.
 
 ## See also
 
+- [`AGENTS.md`](../../../AGENTS.md) — repo-root persona inventory
 - [`template.md`](./template.md) — the embedded orchestrator prompt template
 - [`README.md`](./README.md) — design notes and rationale
 - [`templates/`](./templates/) — bundled HTML templates and state JSON schema
-- [`/stx-fix`](../stx-fix/SKILL.md) — the single-bug sibling skill
+- [`/stx-fix`](../stx-fix/SKILL.md) — the single-bug sibling skill (shares `stx-qa.md`)
 - [`/stx-checkin`](../stx-checkin/SKILL.md) — used to commit/push after wave completion
 - [`/stx-pr-merge`](../stx-pr-merge/SKILL.md) — used to open and merge the wave PR
 - [`/stx-report`](../stx-report/SKILL.md) — alternative end-of-wave reporting

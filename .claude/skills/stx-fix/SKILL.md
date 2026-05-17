@@ -1,9 +1,20 @@
 ---
 name: stx-fix
 description: Drives a two-agent QA → Coder loop against a known bug (or small cluster of related bugs). Interviews the user to fill the prompt template, confirms the worktree state, presents the rendered prompt for explicit user acceptance, then kicks off the loop. Use when the user has a reproducible bug and wants a failing test written first, then the smallest code change that makes it pass.
-version: 1.0.0
+version: 1.1.0
 author: STX
 ---
+
+## Personas (loaded by reference)
+
+This skill spawns two agents. Their contracts live in `.claude/agents/`:
+
+| Persona file | Role |
+|---|---|
+| `.claude/agents/stx-qa.md` | QA (test owner) — shared with `/stx-feature` |
+| `.claude/agents/stx-coder.md` | Coder (single-bug implementer) |
+
+`template.md` references these persona files in §5 of the rendered prompt. See [`AGENTS.md`](../../../AGENTS.md) at the repo root for the full inventory.
 
 # /stx-fix
 
@@ -122,8 +133,10 @@ Once approved, execute the rendered prompt as the orchestrator. The orchestrator
 
 Sub-agent assignment guidance:
 
-- **QA agent** — spawn via `Agent` tool with `subagent_type: general-purpose` (or a dedicated test agent if available). The agent's prompt must include §1 (issues), §3 (expected), and the test-kind constraint. Hand the failing test back to the orchestrator for verification.
-- **Coder agent** — spawn via `Agent` tool with `subagent_type: general-purpose`. The agent's prompt must include the failing test paths, the issue list, the suspected files, and the out-of-scope list. The Coder MUST be told they cannot edit test files.
+- **QA agent** — spawn via `Agent` tool with `subagent_type: general-purpose` (or a dedicated test agent if available). Paste the contents of `.claude/agents/stx-qa.md` into the agent's prompt verbatim, then append §1 (issues), §3 (expected), and the test-kind constraint from the rendered prompt. Hand the failing test back to the orchestrator for verification.
+- **Coder agent** — spawn via `Agent` tool with `subagent_type: general-purpose`. Paste the contents of `.claude/agents/stx-coder.md` into the agent's prompt verbatim, then append the failing test paths, the issue list, the suspected files, and the out-of-scope list.
+
+Both persona files contain the full contract, hard rules, and reporting format. The orchestrator does NOT re-implement persona logic here. If a persona file cannot be read at spawn time, halt — do not fall back to inline prompts.
 
 Loop control is the orchestrator's job. The sub-agents do not decide when the loop ends.
 
@@ -171,6 +184,9 @@ This skill does not have a CLI binary — it is purely conversational and runs i
 
 ## See also
 
+- [`AGENTS.md`](../../../AGENTS.md) — repo-root persona inventory
+- [`.claude/agents/stx-qa.md`](../../agents/stx-qa.md) — QA persona (shared with `/stx-feature`)
+- [`.claude/agents/stx-coder.md`](../../agents/stx-coder.md) — Coder persona
 - [`template.md`](./template.md) — the embedded prompt template
 - [`README.md`](./README.md) — design notes and rationale
 - [`/stx-checkin`](../stx-checkin/SKILL.md) — used by `commit-after-green` and `commit-and-pr` policies to perform the actual commit/push

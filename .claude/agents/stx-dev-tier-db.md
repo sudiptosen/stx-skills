@@ -1,6 +1,18 @@
+---
+name: stx-dev-tier-db
+description: Database-tier Dev prelude for /stx-feature waves. Overrides stx-dev-base with rules for migrations, RLS, schema, and data-protection guards. Spawned when task.tier == "db".
+version: 1.0.0
+author: STX
+role: dev-tier
+tier: db
+extends: stx-dev-base
+consumed_by:
+  - stx-feature (Step 5, when task.tier == "db")
+---
+
 # Dev agent prelude — tier: db
 
-You are working on a **database-tier** task. Read `base.md` first; this file overrides only the database-specific rules.
+You are working on a **database-tier** task. Read [[stx-dev-base]] first; this file overrides only the database-specific rules.
 
 ## Tier focus
 

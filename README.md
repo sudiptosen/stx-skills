@@ -1,10 +1,10 @@
 # stx-skills
 
-Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection — nine slash-commands that drive feature waves, bug fixes, commits, PR merges, documentation, and magazine-quality reports, all built around the worktree model. Install into any project without publishing to npm.
+Organization-wide [Claude Code](https://docs.claude.com/en/docs/claude-code) skills collection — nine slash-commands and nine versioned agent personas that drive feature waves, bug fixes, commits, PR merges, documentation, and magazine-quality reports, all built around the worktree model. Install into any project without publishing to npm.
 
 📖 **[Open the walkthrough →](https://socitix.github.io/stx-skills/)** — full doc with diagrams, expandable skill catalog, settings reference.
 
-Current release: **v1.7.0** · MIT licensed.
+Current release: **v1.8.0** · MIT licensed.
 
 ---
 
@@ -38,6 +38,28 @@ npx ../stx-skills --list                    # show what's available
 npx ../stx-skills --force                   # overwrite existing installs
 npx ../stx-skills --help
 ```
+
+---
+
+## Agents (new in v1.8)
+
+The four-role multi-agent wave (Analyst → Architect → QA → Dev) and the two-role bug-fix loop (QA → Coder) now spawn agents from versioned persona files under [`.claude/agents/`](.claude/agents/) instead of inline prompts in `SKILL.md`. Nine personas total:
+
+| Persona | Role | Consumed by |
+|---|---|---|
+| `stx-analyst.md` | Decomposes feature request → Features with acceptance criteria | `/stx-feature` |
+| `stx-architect.md` | Decomposes Features → tier-tagged Tasks | `/stx-feature` |
+| `stx-qa.md` | Authors failing tests, reruns them, only agent that may edit tests | `/stx-feature`, `/stx-fix` |
+| `stx-coder.md` | Single-bug implementer | `/stx-fix` |
+| `stx-dev-base.md` | Universal Dev prelude (scope guardrails, hand-back format) | `/stx-feature` |
+| `stx-dev-tier-db.md` | DB-tier overlay: migrations, RLS, data-protection guards | `/stx-feature` |
+| `stx-dev-tier-service.md` | Service-tier overlay: three-tier pattern, result shapes | `/stx-feature` |
+| `stx-dev-tier-api.md` | API-tier overlay: thin handlers, Zod, auth, idempotency | `/stx-feature` |
+| `stx-dev-tier-ui.md` | UI-tier overlay: React + Tailwind + shadcn, a11y | `/stx-feature` |
+
+See [`AGENTS.md`](AGENTS.md) for the full inventory, frontmatter spec, and versioning policy. Each wave records its `persona_versions` in `wave-state.json` for reproducibility.
+
+The installer copies `.claude/agents/` alongside `.claude/skills/` into every consuming project.
 
 ---
 
@@ -239,9 +261,17 @@ stx-skills/
 ├── dist/                                     # gitignored — compiled output
 ├── docs/
 │   └── index.html                            # GitHub Pages — synced from help.html
+├── AGENTS.md                                 # persona inventory (v1.8+)
 ├── .claude/
+│   ├── agents/                               # 9 versioned persona files
+│   │   ├── stx-analyst.md
+│   │   ├── stx-architect.md
+│   │   ├── stx-qa.md                        # shared by stx-feature + stx-fix
+│   │   ├── stx-coder.md
+│   │   ├── stx-dev-base.md
+│   │   └── stx-dev-tier-{db,service,api,ui}.md
 │   └── skills/
-│       ├── stx-feature/        (SKILL.md + templates/ + dev-prompts/)
+│       ├── stx-feature/        (SKILL.md + templates/)
 │       ├── stx-fix/            (SKILL.md + template.md)
 │       ├── stx-checkin/        (SKILL.md + README.md)
 │       ├── stx-pr-merge/       (SKILL.md + README.md)

@@ -1,6 +1,18 @@
+---
+name: stx-dev-tier-ui
+description: UI-tier Dev prelude for /stx-feature waves. Overrides stx-dev-base with rules for React + Tailwind + shadcn, a11y, mobile-first responsive, graceful form validation, destructive-action confirmations, and browser verification. Spawned when task.tier == "ui".
+version: 1.0.0
+author: STX
+role: dev-tier
+tier: ui
+extends: stx-dev-base
+consumed_by:
+  - stx-feature (Step 5, when task.tier == "ui")
+---
+
 # Dev agent prelude — tier: ui
 
-You are working on a **UI-tier** task. Read `base.md` first; this file overrides only the UI-specific rules.
+You are working on a **UI-tier** task. Read [[stx-dev-base]] first; this file overrides only the UI-specific rules.
 
 ## Tier focus
 

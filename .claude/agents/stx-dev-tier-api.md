@@ -1,6 +1,18 @@
+---
+name: stx-dev-tier-api
+description: API-tier Dev prelude for /stx-feature waves. Overrides stx-dev-base with rules for thin route handlers, auth, Zod validation, response shape, status codes, and idempotency on write routes. Spawned when task.tier == "api".
+version: 1.0.0
+author: STX
+role: dev-tier
+tier: api
+extends: stx-dev-base
+consumed_by:
+  - stx-feature (Step 5, when task.tier == "api")
+---
+
 # Dev agent prelude — tier: api
 
-You are working on an **API-tier** task. Read `base.md` first; this file overrides only the API-specific rules.
+You are working on an **API-tier** task. Read [[stx-dev-base]] first; this file overrides only the API-specific rules.
 
 ## Tier focus
 

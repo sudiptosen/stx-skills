@@ -159,46 +159,40 @@ All work below happens **inside that worktree**.
 
 The orchestrator (the main assistant running this prompt) is the **router and judge**. It spawns the two sub-agents below, routes results between them, and decides when to halt. The orchestrator does NOT write production code itself; that's the Coder's job. The orchestrator does NOT write tests itself; that's QA's job.
 
+The full contracts for both agents live in versioned persona files. **Load them by reference** — do not embed contract text inline.
+
 ### Agent A — QA (test owner)
 
-**Owns:** the failing test(s) for every issue listed above. The test file is QA's territory; nobody else edits it.
+**Persona file:** `.claude/agents/stx-qa.md` (shared with `/stx-feature`).
 
-**Contract:**
-1. Write {{test_kind}} test(s) that cover **every numbered issue** in §1, asserting the expected behavior in §3.
-2. Run the test(s). Confirm they fail **for the right reason** (the bug, not config drift, not missing fixtures, not a typo). Paste the failure output as evidence.
-3. Hand off to the Coder with: failing test file path, failure output, one-sentence summary per issue.
-4. **Do not propose fixes.** QA's job ends at "here's what's broken and how to detect it."
-5. After the Coder reports green, **rerun the tests independently** (don't trust the Coder's output). Verify each issue's expected behavior is met.
-6. If any test still fails, return to Coder with the **specific failure**, not a generic "still broken." If a different symptom now appears, log it as a new finding for the orchestrator.
+**At spawn time:** paste the entire contents of `.claude/agents/stx-qa.md` into the QA agent's prompt verbatim, then append the following task-specific context:
 
-**Hard rules:**
-- QA does not edit production code.
-- QA does not loosen, skip, or comment out assertions to "help" the Coder.
-- If a test cannot be written for an issue (timing-sensitive, infra-dependent), QA documents *why* and proposes a manual verification protocol — does not silently skip the issue.
+> **Test kind for this run:** `{{test_kind}}`. Cover **every numbered issue** in §1 of this rendered prompt, asserting the expected behavior in §3. Use the **Authoring contract (stx-fix)** section of your persona file. After the Coder reports green, follow the **Verification contract (the loop)** section.
+
+If `.claude/agents/stx-qa.md` cannot be read, **halt the loop** — do not fall back to an inline contract.
 
 ### Agent B — Coder (implementer)
 
-**Owns:** the production code change that makes QA's tests pass.
+**Persona file:** `.claude/agents/stx-coder.md`.
 
-**Contract:**
-1. Read QA's failing test(s) and the issue list.
-2. Investigate the suspected files in §4 and adjacent code as needed.
-3. Implement the **smallest change** that turns QA's tests green.
-4. Run QA's tests locally. Run `npm run lint` and `npm run build`.
+**At spawn time:** paste the entire contents of `.claude/agents/stx-coder.md` into the Coder agent's prompt verbatim, then append:
+
+> **Failing test(s):** `<paths handed off by QA>`. **Suspected files (§4 scope hints):** `{{scope_hints}}`. **Out-of-scope (§4):** `{{out_of_scope}}`. Implement the smallest change that turns the failing test(s) green.
+
 {{#if use_browser_mcp == true}}
-5. For UI-visible changes, also verify in the browser via the Chrome Dev / Playwright MCP — navigate to the repro URL in §2, drive the flow, confirm the symptom is gone.
-6. Hand back to QA with: (a) what changed (file paths + line refs), (b) test output (pasted), (c) lint/build status, (d) browser verification notes.
-{{/if}}
-{{#if use_browser_mcp == false}}
-5. Hand back to QA with: (a) what changed (file paths + line refs), (b) test output (pasted), (c) lint/build status.
+Additionally, for UI-visible changes, append:
+
+> Use the Chrome Dev / Playwright MCP after your change: navigate to the repro URL in §2, drive the flow, confirm the symptom is gone. Include browser verification notes in your hand-back report.
 {{/if}}
 
-**Hard rules:**
-- **Coder MUST NOT edit QA's test files** (per memory: feedback_qa_fixer_workflow.md). Touching the test file is a halt-the-loop offense — escalate to the user.
-- Coder does not weaken or skip QA's assertions, and does not introduce mocks that bypass the bug.
-- Coder reports failures honestly. If a test still fails after the fix, say so; do not paper over.
-- **Minimal-impact rule:** touch only what the bug requires. No drive-by refactors, no surrounding cleanup, no "while I'm here" improvements.
-- Respect §4 out-of-scope guardrails even if a fix there would be cleaner.
+If `.claude/agents/stx-coder.md` cannot be read, **halt the loop** — do not fall back to an inline contract.
+
+### Where to read the full contracts
+
+- **QA contract**, including authoring rules, verification rules, pause authority, and hard rules: `.claude/agents/stx-qa.md`.
+- **Coder contract**, including hard rules (no test edits, no weakened assertions, no out-of-scope edits), writing style, and hand-back report shape: `.claude/agents/stx-coder.md`.
+
+Both files ship with the stx-skills package and are copied into the consuming project by the installer.
 
 ## 6. The loop
 

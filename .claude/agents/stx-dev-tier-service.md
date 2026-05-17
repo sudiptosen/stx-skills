@@ -1,6 +1,18 @@
+---
+name: stx-dev-tier-service
+description: Service-tier Dev prelude for /stx-feature waves. Overrides stx-dev-base with rules for the three-tier service pattern, result shapes, and error handling. Spawned when task.tier == "service".
+version: 1.0.0
+author: STX
+role: dev-tier
+tier: service
+extends: stx-dev-base
+consumed_by:
+  - stx-feature (Step 5, when task.tier == "service")
+---
+
 # Dev agent prelude — tier: service
 
-You are working on a **service-tier** task. Read `base.md` first; this file overrides only the service-specific rules.
+You are working on a **service-tier** task. Read [[stx-dev-base]] first; this file overrides only the service-specific rules.
 
 ## Tier focus
 
