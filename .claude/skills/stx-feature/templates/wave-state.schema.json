@@ -4,7 +4,7 @@
   "title": "wave-state.json",
   "description": "Canonical state for one /stx-feature wave. HTML artifacts are rendered from this file.",
   "type": "object",
-  "required": ["wave_id", "wave_slug", "status", "initial_request", "features", "config"],
+  "required": ["wave_id", "wave_slug", "status", "initial_request", "features", "config", "persona_versions"],
   "properties": {
     "wave_id": {
       "type": "string",
@@ -125,6 +125,21 @@
         "architect": { "type": "integer" },
         "qa": { "type": "integer" },
         "dev": { "type": "integer" }
+      }
+    },
+    "persona_versions": {
+      "type": "object",
+      "description": "Snapshot of .claude/agents/*.md version fields at wave start. Locks the wave to a specific persona generation for reproducibility and cross-wave metric aggregation.",
+      "required": ["analyst", "architect", "qa", "dev_base", "dev_tier_db", "dev_tier_service", "dev_tier_api", "dev_tier_ui"],
+      "properties": {
+        "analyst": { "type": "string", "description": "Version of .claude/agents/stx-analyst.md" },
+        "architect": { "type": "string", "description": "Version of .claude/agents/stx-architect.md" },
+        "qa": { "type": "string", "description": "Version of .claude/agents/stx-qa.md" },
+        "dev_base": { "type": "string", "description": "Version of .claude/agents/stx-dev-base.md" },
+        "dev_tier_db": { "type": "string", "description": "Version of .claude/agents/stx-dev-tier-db.md" },
+        "dev_tier_service": { "type": "string", "description": "Version of .claude/agents/stx-dev-tier-service.md" },
+        "dev_tier_api": { "type": "string", "description": "Version of .claude/agents/stx-dev-tier-api.md" },
+        "dev_tier_ui": { "type": "string", "description": "Version of .claude/agents/stx-dev-tier-ui.md" }
       }
     }
   }

@@ -122,6 +122,11 @@ ${c.bold('HOW IT WORKS')}
   this installer, and copies each skill directory from
   <package>/.claude/skills/<skill> into <target>/.claude/skills/<skill>,
   with the compiled JS dropped alongside each SKILL.md.
+
+  Personas (.claude/agents/*.md) — the contracts spawned by /stx-feature and
+  /stx-fix — are copied to <target>/.claude/agents/ alongside the skills. The
+  full-install path copies the whole personas directory; --skill <name> skips
+  personas because they're shared infrastructure, not skill-scoped.
 `);
 }
 
@@ -156,6 +161,33 @@ function copyDirRecursive(src: string, dest: string): void {
     if (entry.isDirectory()) copyDirRecursive(s, d);
     else if (entry.isFile()) fs.copyFileSync(s, d);
   }
+}
+
+function installAgents(target: string, options: Options): { count: number; action: 'added' | 'updated' | 'linked' | 'skipped' } {
+  const srcDir = path.join(PACKAGE_ROOT, '.claude', 'agents');
+  const destDir = path.join(target, '.claude', 'agents');
+
+  if (!fs.existsSync(srcDir)) return { count: 0, action: 'skipped' };
+
+  const personaFiles = fs.readdirSync(srcDir).filter(f => f.endsWith('.md'));
+  if (personaFiles.length === 0) return { count: 0, action: 'skipped' };
+
+  const existed = fs.existsSync(destDir);
+
+  if (options.link) {
+    if (existed) {
+      try { fs.rmSync(destDir, { recursive: true, force: true }); } catch { /* ignore */ }
+    }
+    fs.mkdirSync(path.dirname(destDir), { recursive: true });
+    fs.symlinkSync(srcDir, destDir, 'dir');
+    return { count: personaFiles.length, action: 'linked' };
+  }
+
+  if (existed) {
+    try { fs.rmSync(destDir, { recursive: true, force: true }); } catch { /* ignore */ }
+  }
+  copyDirRecursive(srcDir, destDir);
+  return { count: personaFiles.length, action: existed ? 'updated' : 'added' };
 }
 
 function installSkill(name: string, target: string, options: Options): { action: 'added' | 'updated' | 'linked' | 'error' } {
@@ -265,6 +297,17 @@ function main(): void {
     if (action === 'added') added++;
     else if (action === 'updated') updated++;
     else if (action === 'linked') linked++;
+  }
+
+  // Personas: copy the entire .claude/agents/ directory alongside the skills.
+  // Skipped when --skill flags select a subset (agents are shared infra, not skill-scoped).
+  if (options.skills.length === 0) {
+    const agentsResult = installAgents(options.target, options);
+    if (agentsResult.count > 0) {
+      const label = agentsResult.action === 'linked' ? '(symlinked)' :
+                    agentsResult.action === 'added' ? '(new)' : '(updated)';
+      console.log(c.success(`  ✓ .claude/agents/ (${agentsResult.count} personas)  ${c.dim(label)}`));
+    }
   }
 
   console.log(c.dim(`\n  ${added} added · ${updated} updated${linked ? ` · ${linked} linked` : ''}`));

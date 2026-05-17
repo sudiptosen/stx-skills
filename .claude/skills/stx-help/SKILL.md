@@ -35,7 +35,7 @@ When this skill fires, print exactly this block (no extra commentary
 before or after):
 
 ```
-STX Skills · v1.7.0
+STX Skills · v1.8.0
 
 MAIN-BOUND       run on main, before any worktree exists
   /stx-feature        Multi-agent feature wave (Analyst → Architect → QA → Dev)
@@ -52,6 +52,10 @@ ANY-BOUND        runs anywhere — main or any worktree
   /stx-magazine-report   Magazine-style HTML report from any source (4 palettes)
   /stx-help              This text help
   /stx-help-html         Full walkthrough doc with diagrams (recommended)
+
+PERSONAS         versioned agent contracts under .claude/agents/
+  stx-analyst, stx-architect, stx-qa, stx-coder,
+  stx-dev-base, stx-dev-tier-{db,service,api,ui}        See AGENTS.md
 
 For the walkthrough with diagrams, examples, and the settings reference:
   /stx-help-html

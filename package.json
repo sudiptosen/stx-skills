@@ -1,6 +1,6 @@
 {
   "name": "stx-skills",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "Organization-wide Claude Code skills collection",
   "main": "dist/cli/install.js",
   "bin": {
@@ -21,6 +21,7 @@
   "keywords": [
     "claude-code",
     "skills",
+    "agents",
     "git",
     "pr",
     "workflow",
@@ -42,6 +43,8 @@
   },
   "files": [
     "dist",
-    ".claude/skills"
+    ".claude/skills",
+    ".claude/agents",
+    "AGENTS.md"
   ]
 }
