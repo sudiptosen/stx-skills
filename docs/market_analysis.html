@@ -21,6 +21,10 @@
     --gold: #b8893a;
     --sage: #5a6e54;
     --highlight: #f3e8c8;
+  --shipped: #5a6e54;
+  --shipped-bg: #e8efe1;
+  --pending: #b8893a;
+  --pending-bg: #f6edd6;
   }
 
   * { box-sizing: border-box; }
@@ -557,6 +561,80 @@
     letter-spacing: 0.02em;
   }
 
+  /* ─── ROADMAP BADGES ─── */
+  .gap.shipped {
+    background: linear-gradient(90deg, var(--shipped-bg) 0%, transparent 80%);
+    border-radius: 4px;
+    padding-left: 24px;
+    margin-left: -24px;
+  }
+  .gap.shipped .gap-num {
+    color: var(--shipped);
+  }
+  .gap.shipped h4::after {
+    content: '✓ SHIPPED';
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--shipped);
+    background: rgba(90, 110, 84, 0.12);
+    padding: 3px 9px;
+    border-radius: 2px;
+    margin-left: 14px;
+    vertical-align: 4px;
+    font-weight: 600;
+  }
+  .gap.shipped .gap-tag {
+    background: rgba(90, 110, 84, 0.12);
+    color: var(--shipped);
+  }
+  .gap.next {
+    border-left: 3px solid var(--pending);
+    padding-left: 16px;
+    margin-left: -19px;
+  }
+  .gap.next h4::after {
+    content: '◆ NEXT';
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--pending);
+    background: var(--pending-bg);
+    padding: 3px 9px;
+    border-radius: 2px;
+    margin-left: 14px;
+    vertical-align: 4px;
+    font-weight: 600;
+  }
+  .gap.next .gap-tag {
+    background: var(--pending-bg);
+    color: var(--accent-deep);
+  }
+
+  /* ─── BAR ROW LABEL TAGS ─── */
+  .bar-label .tag-shipped,
+  .bar-label .tag-next {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.14em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    margin-left: 8px;
+    vertical-align: 1px;
+    font-weight: 600;
+  }
+  .bar-label .tag-shipped {
+    color: var(--paper);
+    background: rgba(90, 110, 84, 0.65);
+  }
+  .bar-label .tag-next {
+    color: var(--paper);
+    background: rgba(184, 137, 58, 0.7);
+  }
+
   /* ─── CALLOUT ─── */
   .callout {
     background: var(--paper-deep);
@@ -669,7 +747,7 @@
 
   <header class="masthead">
     <div class="logo">stx&nbsp;quarterly</div>
-    <div class="meta">Vol. I · No. 1 · May 2026</div>
+    <div class="meta">Vol. I · No. 2 · Roadmap Update · May 2026</div>
   </header>
 
   <!-- ─────────── HERO ─────────── -->
@@ -680,9 +758,9 @@
       A market analysis of how AI-native software shops are building with coding agents in 2026 — and where one engineer's home-grown skills package fits on the map.
     </p>
     <div class="byline">
-      <span><strong>Filed</strong> &nbsp; May 16, 2026</span>
-      <span><strong>Subject</strong> &nbsp; STX Skills · stx-feature</span>
-      <span><strong>Verdict</strong> &nbsp; 8 / 10</span>
+      <span><strong>Filed</strong> &nbsp; May 16, 2026 · Updated May 17</span>
+      <span><strong>Subject</strong> &nbsp; STX Skills · v1.9.0</span>
+      <span><strong>Verdict</strong> &nbsp; 8 → 9 / 10</span>
     </div>
   </header>
 
@@ -690,6 +768,16 @@
   <p class="lede">
     The shops that built the first generation of "AI software engineers" — Cognition, Cosine, Factory, Sourcegraph, All Hands — have converged on a stack. Plan in one place. Edit in worktrees. Verify with tests. Gate at the boundaries that matter. The interesting question isn't whether agents can write code in 2026. They can. The question is whether the orchestration around them is auditable, parallel, and disciplined enough to trust. This report walks the landscape, names the patterns, and scores one specific setup against the public bar.
   </p>
+
+  <!-- ─────────── ROADMAP STATUS BANNER ─────────── -->
+  <div class="callout" style="margin: 0 0 80px;">
+    <div class="label" style="color: var(--shipped); margin-bottom: 18px;">UPDATE · May 17, 2026 — Two waves shipped, two to go</div>
+    <p>
+      <strong>Wave 1 (v1.8.0)</strong> extracted the nine personas to <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">.claude/agents/*.md</code> — diffable, A/B-testable, semver-tracked. Persona reusability moved from <strong>4.5 → 9</strong>.<br><br>
+      <strong>Wave 2 (v1.9.0)</strong> added the <strong>Reviewer</strong> persona between Dev hand-back and QA's rerun. Three instant-halt verdicts (<code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">test-file-edit-detected</code>, <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">assertion-weakened</code>, <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">sut-mocked</code>) catch test-bypass before QA's rerun goes green. Automated review droid moved from <strong>2.5 → 8</strong>.<br><br>
+      <strong>Next: Wave 3 — the execution-feedback loop.</strong> The reviewer_verdicts[] array is now writing to disk per iteration, so the data is there. What's missing is the aggregator — see §V gap 03 below.
+    </p>
+  </div>
 
   <!-- ─────────── SECTION 1: 8090 ─────────── -->
   <section>
@@ -826,17 +914,17 @@
       </div>
 
       <div class="score-headline">
-        <div class="score-num"><em>8</em><span class="score-frac">/10</span></div>
+        <div class="score-num"><em>9</em><span class="score-frac">/10</span></div>
         <div class="score-summary">
-          Above mid-tier on <em>discipline</em> and <em>auditability</em>. Matches Factory on coordinator-and-workers. Beats Devin and Cosine on gate granularity.
+          After two waves of work — <em>persona extraction</em> (Wave 1, v1.8) and the <em>Reviewer droid</em> (Wave 2, v1.9) — the package is now <em>at parity</em> with Factory on coordination and review, and ahead of every shop on gate granularity. Original score 8/10 in italics where bars moved.
         </div>
       </div>
 
       <div class="score-bars">
         <div class="bar-row">
           <div class="bar-label">Multi-agent coordination</div>
-          <div class="bar-track"><div class="bar-fill" style="width: 90%;"></div></div>
-          <div class="bar-val">9 / 10</div>
+          <div class="bar-track"><div class="bar-fill" style="width: 95%;"></div></div>
+          <div class="bar-val">9.5 / 10</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">Approval gating</div>
@@ -850,23 +938,23 @@
         </div>
         <div class="bar-row">
           <div class="bar-label">Test-first verification</div>
-          <div class="bar-track"><div class="bar-fill" style="width: 85%;"></div></div>
-          <div class="bar-val">8.5 / 10</div>
+          <div class="bar-track"><div class="bar-fill" style="width: 90%;"></div></div>
+          <div class="bar-val">9 / 10</div>
         </div>
         <div class="bar-row">
-          <div class="bar-label">Persona reusability</div>
-          <div class="bar-track"><div class="bar-fill" style="width: 45%;"></div></div>
-          <div class="bar-val">4.5 / 10</div>
+          <div class="bar-label">Persona reusability <span class="tag-shipped">WAVE 1 ✓</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: 90%;"></div></div>
+          <div class="bar-val">9 / 10</div>
         </div>
         <div class="bar-row">
-          <div class="bar-label">Automated review droid</div>
+          <div class="bar-label">Automated review droid <span class="tag-shipped">WAVE 2 ✓</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width: 80%;"></div></div>
+          <div class="bar-val">8 / 10</div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label">Execution-feedback loop <span class="tag-next">WAVE 3 ◆</span></div>
           <div class="bar-track"><div class="bar-fill" style="width: 25%;"></div></div>
           <div class="bar-val">2.5 / 10</div>
-        </div>
-        <div class="bar-row">
-          <div class="bar-label">Execution-feedback loop</div>
-          <div class="bar-track"><div class="bar-fill" style="width: 20%;"></div></div>
-          <div class="bar-val">2 / 10</div>
         </div>
         <div class="bar-row">
           <div class="bar-label">Codebase index</div>
@@ -877,7 +965,10 @@
     </div>
 
     <p>
-      The high marks are earned. Three explicit user-approval gates. Worktree-per-wave with no-overlap parallelism on <code style="background:var(--paper-deep);padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">scope_paths</code>. Tier-specialized Devs under QA control — rarer, and arguably more disciplined, than the role-specialization most shops do. HTML artifact trail at every stage. Test-first <code style="background:var(--paper-deep);padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">/stx-fix</code> sibling. Typed memory. Hard data-protection and commit-approval guardrails baked into the global rules.
+      The high marks are earned. Three explicit user-approval gates. Worktree-per-wave with no-overlap parallelism on <code style="background:var(--paper-deep);padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">scope_paths</code>. Tier-specialized Devs under Reviewer + QA control — the Reviewer reads diffs line-by-line before QA's test rerun, halting the loop on test-file edits, weakened assertions, or SUT mocks. HTML artifact trail at every stage. Test-first <code style="background:var(--paper-deep);padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">/stx-fix</code> sibling. Typed memory. Hard data-protection and commit-approval guardrails baked into the global rules.
+    </p>
+    <p>
+      <strong>What moved:</strong> the two bars with <em>WAVE 1 ✓</em> and <em>WAVE 2 ✓</em> tags. <strong>What's next:</strong> the <em>WAVE 3 ◆</em> bar — execution-feedback loop, now unblocked because Waves 1 and 2 ship the schema fields it depends on (<code style="background:var(--paper-deep);padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">persona_versions</code> and <code style="background:var(--paper-deep);padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">reviewer_verdicts[]</code>). <strong>What's open:</strong> the codebase index — the highest ceiling, the longest investment, deferred until Waves 1–3 show their value.
     </p>
   </section>
 
@@ -887,41 +978,44 @@
     <h2>What's <em>Missing</em>.</h2>
 
     <p>
-      Four gaps separate this setup from the 9–10 tier. None are expensive on their own; each one removed is a step closer to the public bar set by Factory and Amp.
+      Four gaps separated this setup from the 9–10 tier when the report first filed. <strong>Two are now closed.</strong> Each gap below carries its current status — what shipped, what's next, what's still open.
     </p>
 
     <div class="gaps">
 
-      <div class="gap">
+      <div class="gap shipped">
         <div class="gap-num">01</div>
         <div class="gap-body">
           <h4>Personas live inline.</h4>
           <p>
-            Analyst, Architect, QA, and four tier-Devs are all defined as inline prompts inside <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">SKILL.md</code>. They aren't diffable, A/B-testable, or reusable from <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">/stx-fix</code>. The fix is mechanical: extract to <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">.claude/agents/*.md</code>.
+            <strong>Resolved in v1.8.0 (Wave 1, May 17 2026).</strong> Nine personas now live under <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">.claude/agents/*.md</code> with YAML frontmatter and independent semver. <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">SKILL.md</code> loads each persona by reference; the installer copies the directory into every consuming project; <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">AGENTS.md</code> at the repo root names the portable standard. Every wave records its <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">persona_versions</code> snapshot in <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">wave-state.json</code>. Persona reusability moved <strong>4.5 → 9</strong>.
           </p>
-          <span class="gap-tag">cost: half a day · unlocks: gap 03</span>
+          <span class="gap-tag">delivered in half a day · PR #8 · merged a8a9f24's parent</span>
         </div>
       </div>
 
-      <div class="gap">
+      <div class="gap shipped">
         <div class="gap-num">02</div>
         <div class="gap-body">
           <h4>No automated Reviewer droid.</h4>
           <p>
-            Factory runs a Review Droid against the Code Droid's diff <em>before</em> the test reruns. Here, QA reruns the test directly — the diff itself is never read by a second agent. A Reviewer slots cleanly into the QA-Dev loop between "Dev finishes" and "QA reruns test."
+            <strong>Resolved in v1.9.0 (Wave 2, May 17 2026).</strong> The Reviewer persona sits between Dev hand-back and QA's rerun. Reads the Dev's diff line-by-line, applies a structured checklist (scope, pattern, result-shape, typing, smallest-change, comment-debt, error-handling, smell, out-of-scope-frozen), and emits a verdict. Three <em>instant-halt</em> verdicts catch the test-bypass attempts that previously slipped through to QA: <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">test-file-edit-detected</code>, <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">assertion-weakened</code>, <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">sut-mocked</code>. Verdicts append to <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">reviewer_verdicts[]</code>. Automated review moved <strong>2.5 → 8</strong>.
           </p>
-          <span class="gap-tag">cost: one to two days · unlocks: catching test-bypass earlier</span>
+          <span class="gap-tag">delivered in one day · PR #9 · merged a8a9f24</span>
         </div>
       </div>
 
-      <div class="gap">
+      <div class="gap next">
         <div class="gap-num">03</div>
         <div class="gap-body">
           <h4>No execution-feedback loop.</h4>
           <p>
-            Suspicious-change rate, iteration counts, gate rejection reasons — none of it is aggregated across waves. Without instrumentation, no improvement signal. <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">wave-state.json</code> already has the raw data; what's missing is the aggregator.
+            Suspicious-change rate, iteration counts, Reviewer rejection rate per tier, most-common concern kind, concerns that survive past iteration 2 — none of it is aggregated across waves. Without instrumentation, no improvement signal. <strong>Now unblocked:</strong> Wave 1 shipped <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">persona_versions</code> (so metrics can be sliced by persona generation), and Wave 2 shipped <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">reviewer_verdicts[]</code> (so concern kinds and rejection rates are derivable for free). The aggregator is the missing piece.
           </p>
-          <span class="gap-tag">cost: a few days · gated on: gap 01</span>
+          <p style="margin-top: 10px; font-size: 14px;">
+            <strong>Plan:</strong> a new any-bound skill <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">/stx-wave-metrics</code> that reads every <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">docs/waves/*/wave-state.json</code> in the project and emits <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">docs/wave-metrics.html</code> (single-file, same visual register as the existing verse templates). Metrics: per-persona suspicious-change rate, iteration histogram, Reviewer rejection rate, time-to-green per tier, top-3 worst tasks. Also emits a JSON sidecar so a CI step can fail the build if the suspicious rate exceeds a threshold. Schedulable via <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">/loop 7d /stx-wave-metrics</code>.
+          </p>
+          <span class="gap-tag">cost: 2–3 days · unblocked by Waves 1+2 · target: v1.10</span>
         </div>
       </div>
 
@@ -930,9 +1024,12 @@
         <div class="gap-body">
           <h4>No codebase index.</h4>
           <p>
-            The Architect rediscovers existing patterns by grep every wave. Sourcegraph Amp's competitive edge is precisely the persistent index. A local embedding index (or a much simpler symbol-graph cache) would let the Architect cite existing patterns without re-exploring.
+            The Architect rediscovers existing patterns by grep every wave. Sourcegraph Amp's competitive edge is precisely the persistent index. A local symbol-graph cache (Phase A, cheap) or embedding index (Phase C, expensive) would let the Architect cite existing patterns without re-exploring.
           </p>
-          <span class="gap-tag">cost: ongoing · highest ceiling</span>
+          <p style="margin-top: 10px; font-size: 14px;">
+            <strong>Plan:</strong> defer until Wave 3 ships and its metrics show whether the Architect's pattern-citation accuracy actually plateaus low. If it does, a Phase A symbol-graph (tree-sitter or ast-grep over the consuming repo, written to <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">.claude/index/symbols.json</code>) is the cheapest move. Phase B adds a curated <code style="background:var(--paper-deep);padding:1px 6px;font-family:'JetBrains Mono',monospace;font-size:13px;">patterns.jsonl</code> appended on every architecture decision. Phase C (embeddings) only if A+B aren't enough.
+          </p>
+          <span class="gap-tag">cost: ongoing · highest ceiling · target: post-Wave-3</span>
         </div>
       </div>
 
@@ -942,9 +1039,12 @@
   <!-- ─────────── CALLOUT: NEXT MOVE ─────────── -->
   <section>
     <div class="callout">
-      <div class="label">The cheapest next upgrade</div>
+      <div class="label">The next move · Wave 3</div>
       <p>
-        Extract the personas. Half a day of work moves the score from <strong>8</strong> toward <strong>8.5</strong> directly, and — by giving you a stable, versioned surface to instrument — unlocks the execution-feedback loop that gets the score into the nines. Everything else is downstream of having diffable agent definitions.
+        <strong>Build the aggregator.</strong> The schema fields are all there — <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">persona_versions</code>, <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">reviewer_verdicts[]</code>, <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">suspicious[]</code>, <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">escalations[]</code>, <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">iterations_used</code>. Ship <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">/stx-wave-metrics</code> as a new any-bound skill that walks <code style="background:transparent;padding:1px 4px;font-family:'JetBrains Mono',monospace;font-size:14px;">docs/waves/*/wave-state.json</code> and emits a single-file HTML report plus a JSON sidecar. Two to three days. Moves the score from <strong>9 → ~9.5</strong> and gives the first real signal for whether Wave 4 (codebase index) earns its cost.
+      </p>
+      <p style="margin-top: 16px;">
+        <strong>What to measure first:</strong> per-tier Reviewer rejection rate (calibration check — if it never rejects, the prompt needs tightening; if it rejects ≥50%, it may be too aggressive); concerns that persist past iteration 2 (these are the real-world failure modes); time-to-green per tier (which tier slows the wave most).
       </p>
     </div>
   </section>
@@ -973,7 +1073,7 @@
   </footer>
 
   <div class="colophon">
-    Set in Fraunces &amp; Inter · Composed by STX Quarterly · May MMXXVI
+    Set in Fraunces &amp; Inter · Composed by STX Quarterly · May MMXXVI · Roadmap-Update Edition
   </div>
 
 </div>
